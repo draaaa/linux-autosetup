@@ -11,3 +11,5 @@ This repo serves two purposes - firstly, and more importantly, it is an archive 
 **About Scripts**
 
 At the moment, I'm still debating whether or not I should include virt-manager as something that even comes with this. I probably won't have it install with everything else since it's usecase is relatively niche and not something that's really needed for all of my computers, so if there are any leftover references to virt-manager or commands like virshstart or similar that I don't manage to clear out then feel free to submit an issue. 
+
+testing on git
