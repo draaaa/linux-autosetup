@@ -20,6 +20,7 @@
 #     3. Apply preferred configs to apps
 #          We'll continue ideating later. I don't want to look too far into the future before I barely even have a base to start with.
 
+# activity test
 
 #TODO Priority
 # Test Debian 12 compatability
