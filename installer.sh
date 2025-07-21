@@ -52,6 +52,8 @@ if [ "$packageManager" = "pacman" ]; then
         sudo pacman -S --noconfirm wget
     # fastfetch
         sudo pacman -S --noconfirm fastfetch
+    # ufw
+        sudo pacman -S --noconfirm ufw
 
 elif [ "$packageManager" = "apt" ]; then
     sudo apt update && sudo apt upgrade -y
@@ -59,6 +61,8 @@ elif [ "$packageManager" = "apt" ]; then
         sudo apt install -y wget
     # fastfetch
         sudo apt install -y fastfetch
+    # ufw
+        sudo apt install -y ufw
 
 elif [ "$packageManager" = "aptDeb12" ]; then  # Untested
     sudo apt update && sudo apt upgrade -y
@@ -66,6 +70,8 @@ elif [ "$packageManager" = "aptDeb12" ]; then  # Untested
         wget -O fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb # For now, we can just use one version. Maybe look into using the newest version later
         sudo apt install -y ./fastfetch.deb
         rm fastfetch.deb
+    # ufw
+        sudo apt install -y ufw
 fi
 
 
@@ -75,4 +81,5 @@ fi
 # fastfetch
     mkdir -p ~/.config/fastfetch
     wget -O ~/.config/fastfetch/config.jsonc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/fastfetch/config.jsonc
-
+# ufw
+    sudo ufw enable
