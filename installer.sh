@@ -21,9 +21,9 @@
 #          We'll continue ideating later. I don't want to look too far into the future before I barely even have a base to start with.
 
 
-#TODO
+#TODO Priority
 # Test Debian 12 compatability
-
+# Test config application
 
 # Check Distro
 packageManager=""
@@ -40,24 +40,39 @@ elif [ "$ID" = "debian" ]; then
 fi
 
 # Separating the if structures seems a bit redundant and unnecessary for anything beyond structure, which isn't the main priority.
-# I'll leave it like this for now because of inexperience with shell, but this is absolutely something that will need to be reworked. 
+# I'll leave it like this for now because of inexperience with shell, but this is something that should probably be reworked. 
 # For now, since my sandbox laptop is on Debian 13, most of this will be tested on Debian 13 first, then tested on Arch when I 
 # install it onto the sandbox.
 # For now, fastfetch will be the main package used for testing. 
+# !!! IMPORTANT !!! - should consider doing one install command if possible rather than doing multiple. would make things slightly more optimized.
+# Once there are enough packages for me to be satisfied, I'll update it so that there aren't this many unneeded install commands
 if [ "$packageManager" = "pacman" ]; then
-    sudo pacman -Syu
+    sudo pacman -Syu  # no '--noconfirm' because of the arch horror stories and updates bricking installs  
+    # Dependencies
+        sudo pacman -S --noconfirm wget
     # fastfetch
-        sudo pacman -S fastfetch
+        sudo pacman -S --noconfirm fastfetch
 
 elif [ "$packageManager" = "apt" ]; then
     sudo apt update && sudo apt upgrade -y
+    # dependencies
+        sudo apt install -y wget
     # fastfetch
-        sudo apt install fastfetch -y
+        sudo apt install -y fastfetch
 
 elif [ "$packageManager" = "aptDeb12" ]; then  # Untested
     sudo apt update && sudo apt upgrade -y
     # fastfetch
-        wget https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb -0 fastfetch.deb # For now, we can just use one version. Maybe look into using the newest version later
-        sudo apt install ./fastfetch.deb
+        wget -O fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb # For now, we can just use one version. Maybe look into using the newest version later
+        sudo apt install -y ./fastfetch.deb
         rm fastfetch.deb
 fi
+
+
+# Now that everything is (ideally) installed, we should begin applying the configs from the repo
+# We should use wget since it comes with most distributions. Just found out it doesn't come with Arch, so I'll add that to a download dependency list
+# Use the raw github links like this - https://raw.githubusercontent.com/draaaa/linux-autosetup/main/file
+# fastfetch
+    mkdir -p ~/.config/fastfetch
+    wget -O ~/.config/fastfetch/config.jsonc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/fastfetch/config.jsonc
+
