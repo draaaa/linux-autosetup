@@ -20,11 +20,11 @@
 #     3. Apply preferred configs to apps
 #          We'll continue ideating later. I don't want to look too far into the future before I barely even have a base to start with.
 
-# activity test
 
 #TODO Priority
 # Test Debian 12 compatability
 # Test config application
+# Test shell conversion (bash to zsh)
 
 # Check Distro
 packageManager=""
@@ -50,28 +50,28 @@ fi
 if [ "$packageManager" = "pacman" ]; then
     sudo pacman -Syu  # no '--noconfirm' because of the arch horror stories and updates bricking installs  
     # Dependencies
-        sudo pacman -S --noconfirm wget
-    # fastfetch
+        sudo pacman -S --noconfirm wget zsh
+    # Everything else
         sudo pacman -S --noconfirm fastfetch
-    # ufw
         sudo pacman -S --noconfirm ufw
 
 elif [ "$packageManager" = "apt" ]; then
     sudo apt update && sudo apt upgrade -y
-    # dependencies
-        sudo apt install -y wget
-    # fastfetch
+    # Dependencies
+        sudo apt install -y wget zsh
+    # Everything else
         sudo apt install -y fastfetch
-    # ufw
         sudo apt install -y ufw
 
 elif [ "$packageManager" = "aptDeb12" ]; then  # Untested
     sudo apt update && sudo apt upgrade -y
-    # fastfetch
-        wget -O fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb # For now, we can just use one version. Maybe look into using the newest version later
-        sudo apt install -y ./fastfetch.deb
-        rm fastfetch.deb
-    # ufw
+    # Dependencies
+        sudo ap tinstlal -y wget zsh
+    # Everything else
+        # fastfetch
+            wget -O fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb # For now, we can just use one version. Maybe look into using the newest version later
+            sudo apt install -y ./fastfetch.deb
+            rm fastfetch.deb
         sudo apt install -y ufw
 fi
 
@@ -84,3 +84,7 @@ fi
     wget -O ~/.config/fastfetch/config.jsonc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/fastfetch/config.jsonc
 # ufw
     sudo ufw enable
+# zsh
+    chsh -s $(which zsh)  # should ideally set zsh to default terminal 
+    # Once we know that this script successfully sets zsh to be the default shell, then we can worry about importing the profile, config, etc
+    
