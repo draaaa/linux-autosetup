@@ -30,6 +30,14 @@
 #        a little more convenient for the end user. 
 
 
+# Check if user is sudoer
+readp "Have you made your user a sudoer? (Y/n)" isSudoer
+if [[ "$isSudoer" != "" && "$isSudoer" != "y" && "$isSudoer" != "Y" ]]; then
+    echo "Make yourself a sudoer in the root user with 'usermod -aG sudo user'"
+    exit 1
+fi
+
+
 # Check Distro
 packageManager=""
 source /etc/os-release
@@ -51,6 +59,8 @@ fi
 # For now, fastfetch will be the main package used for testing. 
 # !!! IMPORTANT !!! - should consider doing one install command if possible rather than doing multiple. would make things slightly more optimized.
 # Once there are enough packages for me to be satisfied, I'll update it so that there aren't this many unneeded install commands
+
+
 if [ "$packageManager" = "pacman" ]; then
     sudo pacman -Syu  # no '--noconfirm' because of the arch horror stories and updates bricking installs  
     # Dependencies
@@ -92,3 +102,8 @@ fi
     chsh -s $(which zsh)  # should ideally set zsh to default terminal 
     # Once we know that this script successfully sets zsh to be the default shell, then we can worry about importing the profile, config, etc
     
+# Prompt reboot
+readp "Reboot is recommended. Want to reboot? (Y/n)" doReboot
+if [[ "$doReboot" == "" || "$doReboot" == "y" || "$doReboot" == "Y" ]]; then
+    sudo reboot
+fi
