@@ -1,6 +1,5 @@
 # There's gonna be a bunch of comments that I don't keep and will remove later in this file. I'm using it for the development process.
 
-# test 2
 
 # Ideation
 #   The Goal
@@ -21,7 +20,6 @@
 #     3. Apply preferred configs to apps
 #          We'll continue ideating later. I don't want to look too far into the future before I barely even have a base to start with.
 
-# test
 
 #TODO Priority
 # Test Debian 12 compatability
@@ -30,6 +28,7 @@
 
 #DONE* - I want to see if there's a way to automatically have zsh set up rather than having to set it up post install but pre logout. It works, and that's the important part, but we can make it 
 #        a little more convenient for the end user. 
+
 
 # Check Distro
 packageManager=""
