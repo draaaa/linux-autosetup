@@ -23,8 +23,11 @@
 
 #TODO Priority
 # Test Debian 12 compatability
-# Test config application
-# Test shell conversion (bash to zsh)
+# Test config application -- DONE
+# Test shell conversion (bash to zsh) -- DONE*
+
+#DONE* - I want to see if there's a way to automatically have zsh set up rather than having to set it up post install but pre logout. It works, and that's the important part, but we can make it 
+#        a little more convenient for the end user. 
 
 # Check Distro
 packageManager=""
