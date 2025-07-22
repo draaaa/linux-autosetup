@@ -30,6 +30,18 @@
 #        a little more convenient for the end user. 
 
 
+# Cool little intro thingy
+cat << EOF
+    ___                                    __                  __            
+   / (_)___  __  ___  __      ____ ___  __/ /_____  ________  / /___  ______ 
+  / / / __ \/ / / / |/_/_____/ __ \`/ / / / __/ __ \/ ___/ _ \/ __/ / / / __ \\
+ / / / / / / /_/ />  </_____/ /_/ / /_/ / /_/ /_/ (__  )  __/ /_/ /_/ / /_/ /
+/_/_/_/ /_/\__,_/_/|_|      \__,_/\__,_/\__/\____/____/\___/\__/\__,_/ .___/ 
+                                                                    /_/      
+EOF
+echo -e "made by draaaa :3\npls remember to submit an issue to the github if there are problems\nsupported distros - Arch, Debian 13, Debian 12***"
+
+
 # Check if user is sudoer
 readp "Have you made your user a sudoer? (Y/n)" isSudoer
 if [[ "$isSudoer" != "" && "$isSudoer" != "y" && "$isSudoer" != "Y" ]]; then
