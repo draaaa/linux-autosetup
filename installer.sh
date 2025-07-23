@@ -23,12 +23,16 @@ source /etc/os-release
 
 if [ "$ID" = "arch" ]; then
     packageManager="pacman"
-elif [ "$ID" = "debian" ]; then 
+elif [ "$ID" = "debian" ]; then  # Pretty much all other apt utilizing distros will go here as well. Likely to remove the special Debian 12 case
     if [ "$VERSION_ID" = "13" ]; then
         packageManager="apt"
-    elif [ "$VERSION_ID" = "12" ]; then
-        packageManager="aptDeb12"  # For now, we can use a separate name for Debian 12 until I can come up with a workaround for the version issues.
+    elif [ "$VERSION_ID" = "12" ]; then  # Untested, no longer priority for updates
+        packageManager="aptDeb12"  
     fi
+elif [ "$ID" = "fedora" ]; then  # Untested
+    packageManager="dnf"
+else
+    echo -e "Your distro may be unsupported, or there may be an error with detecting your distro. The current list of supported distros are;\nArch\nDebian 13\nFedora (testing)\n If you are on Fedora, please submit an issue regarding a bad detection method.\nIf you are NOT on Fedora, please submit an issue saying that your distro is not supported."
 fi
 
 
@@ -48,8 +52,8 @@ elif [ "$packageManager" = "apt" ]; then
     # Everything else
         sudo apt install -y fastfetch
         sudo apt install -y ufw
-
-elif [ "$packageManager" = "aptDeb12" ]; then  # Untested
+# Untested, no longer priority for updates
+elif [ "$packageManager" = "aptDeb12" ]; then 
     sudo apt update && sudo apt upgrade -y
     # Dependencies
         sudo ap tinstlal -y wget zsh
