@@ -39,11 +39,12 @@ cat << EOF
 /_/_/_/ /_/\__,_/_/|_|      \__,_/\__,_/\__/\____/____/\___/\__/\__,_/ .___/ 
                                                                     /_/      
 EOF
-echo -e "made by draaaa :3\npls remember to submit an issue to the github if there are problems\nsupported distros - Arch, Debian 13, Debian 12***"
+echo -e "made by draaaa :3\npls remember to submit an issue to the github if there are problems\nsupported distros - Arch, Debian 13, Debian 12***\n\n"
 
 
 # Check if user is sudoer
-readp "Have you made your user a sudoer? (Y/n)" isSudoer
+printf "Have you made your user a sudoer? [Y/n] "
+read isSudoer
 if [[ "$isSudoer" != "" && "$isSudoer" != "y" && "$isSudoer" != "Y" ]]; then
     echo "Make yourself a sudoer in the root user with 'usermod -aG sudo user'"
     exit 1
@@ -115,7 +116,8 @@ fi
     # Once we know that this script successfully sets zsh to be the default shell, then we can worry about importing the profile, config, etc
     
 # Prompt reboot
-readp "Reboot is recommended. Want to reboot? (Y/n)" doReboot
+printf "Reboot is recommended. Want to reboot? [Y/n] " 
+read doReboot
 if [[ "$doReboot" == "" || "$doReboot" == "y" || "$doReboot" == "Y" ]]; then
     sudo reboot
 fi
