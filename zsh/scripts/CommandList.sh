@@ -24,18 +24,13 @@ RESET='\e[0m'
 
 # system commands
 echo -e "${RED}system${RESET}"
-echo -e "  ${BRIGHT_RED}virshstart${RESET}"
-echo -e "    starts the default server necessary to run a vm in ${MAGENTA}virt-manager${RESET}"
-echo -e ""
-echo -e "  ${BRIGHT_RED}virshstop${RESET}"
-echo -e "    stops the default server necessary to run a vm in ${MAGENTA}virt-manager${RESET}"
-echo -e ""
 echo -e "  ${BRIGHT_RED}tldr arg${RESET}"
 echo -e "    returns a basic explanation and (sometimes) a list of args - essentially a better 'command -h'"
 echo -e "    it doesnt work with every command, mostly only default commands that come with linux"
 echo -e ""
-echo -e "  ${BRIGHT_RED}sudo pacman -Syup${RESET}"
-echo -e "    returns the list of targets that would update without performing them"
+echo -e "  ${BRIGHT_RED}fastfetch${RESET}"
+echo -e "    returns a sorted list of information about the computer, similar to ${MAGENTA}neofetch${RESET}"
+echo -e "    you can find the ${MAGENTA}fastfetch${RESET} config at ${MAGENTA}~/.config/fastfetch/config.jsonc${RESET}"
 echo -e ""
 
 # fun commands
