@@ -41,7 +41,9 @@ fi
 if [ "$packageManager" = "pacman" ]; then
     sudo pacman -Syu  # no '--noconfirm' because of the arch horror stories and updates bricking installs  
     # Dependencies
-        sudo pacman -S --noconfirm wget zsh tldr
+        sudo pacman -S --noconfirm wget zsh tldr cowsay
+        # pokemon-colorscripts
+            yay -S --noconfirm pokemon-colorscripts-git
     # Everything else
         sudo pacman -S --noconfirm fastfetch
         sudo pacman -S --noconfirm ufw
@@ -49,7 +51,11 @@ if [ "$packageManager" = "pacman" ]; then
 elif [ "$packageManager" = "apt" ]; then
     sudo apt update && sudo apt upgrade -y
     # Dependencies
-        sudo apt install -y wget zsh tldr
+        sudo apt install -y wget zsh tldr cowsay
+        # pokemon-colorscripts
+            git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
+            cd pokemon-colorscripts
+            sudo ./install.sh
     # Everything else
         sudo apt install -y fastfetch
         sudo apt install -y ufw
@@ -68,7 +74,11 @@ elif [ "$packageManager" = "aptDeb12" ]; then
 elif [ "$packageManager" = "dnf" ]; then
     sudo dnf upgrade -y --refresh
     # Dependencies
-        sudo dnf install -y wget zsh tldr
+        sudo dnf install -y wget zsh tldr cowsay
+        # pokemon-colorscripts
+            git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
+            cd pokemon-colorscripts
+            sudo ./install.sh
     # Everything else
         sudo dnf install -y fastfetch
         sudo dnf install -y ufw
