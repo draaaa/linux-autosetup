@@ -33,6 +33,7 @@ elif [ "$ID" = "fedora" ]; then  # Untested
     packageManager="dnf"
 else
     echo -e "Your distro may be unsupported, or there may be an error with detecting your distro. The current list of supported distros are;\nArch\nDebian 13\nFedora (testing)\n If you are on Fedora, please submit an issue regarding a bad detection method.\nIf you are NOT on Fedora, please submit an issue saying that your distro is not supported."
+    exit 1
 fi
 
 
@@ -56,13 +57,21 @@ elif [ "$packageManager" = "apt" ]; then
 elif [ "$packageManager" = "aptDeb12" ]; then 
     sudo apt update && sudo apt upgrade -y
     # Dependencies
-        sudo ap tinstlal -y wget zsh
+        sudo apt install -y wget zsh
     # Everything else
         # fastfetch
             wget -O fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb # For now, we can just use one version. Maybe look into using the newest version later
             sudo apt install -y ./fastfetch.deb
             rm fastfetch.deb
         sudo apt install -y ufw
+
+elif [ "$packageManager" = "dnf" ]; then
+    sudo dnf upgrade --refresh
+    # Dependencies
+        sudo dnf install -y wget zsh
+    # Everything else
+        sudo dnf install -y fastfetch
+        sudo dnf install -y ufw
 fi
 
 
@@ -81,3 +90,5 @@ read doReboot
 if [[ "$doReboot" == "" || "$doReboot" == "y" || "$doReboot" == "Y" ]]; then
     sudo reboot
 fi
+
+exit 0
