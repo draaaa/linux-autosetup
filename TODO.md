@@ -1,12 +1,10 @@
 **General**
 
 - Add more packages
-- Remove the unnecessary comments from the shell script
 
 **Compatability** 
 
-- Test compatability with Debian 12
-- Integrate compatability with Fedora Linux
+- ~~Test compatability with Debian 12~~ (No longer priority, see README)
 
 **Configs**
 
