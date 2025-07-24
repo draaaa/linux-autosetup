@@ -41,7 +41,7 @@ fi
 if [ "$packageManager" = "pacman" ]; then
     sudo pacman -Syu  # no '--noconfirm' because of the arch horror stories and updates bricking installs  
     # Dependencies
-        sudo pacman -S --noconfirm wget zsh
+        sudo pacman -S --noconfirm wget zsh tldr
     # Everything else
         sudo pacman -S --noconfirm fastfetch
         sudo pacman -S --noconfirm ufw
@@ -49,7 +49,7 @@ if [ "$packageManager" = "pacman" ]; then
 elif [ "$packageManager" = "apt" ]; then
     sudo apt update && sudo apt upgrade -y
     # Dependencies
-        sudo apt install -y wget zsh
+        sudo apt install -y wget zsh tldr
     # Everything else
         sudo apt install -y fastfetch
         sudo apt install -y ufw
@@ -66,9 +66,9 @@ elif [ "$packageManager" = "aptDeb12" ]; then
         sudo apt install -y ufw
 
 elif [ "$packageManager" = "dnf" ]; then
-    sudo dnf upgrade --refresh
+    sudo dnf upgrade -y --refresh
     # Dependencies
-        sudo dnf install -y wget zsh
+        sudo dnf install -y wget zsh tldr
     # Everything else
         sudo dnf install -y fastfetch
         sudo dnf install -y ufw
@@ -82,8 +82,18 @@ fi
 # ufw
     sudo ufw enable
 # zsh
-    chsh -s $(which zsh) 
-    
+    # set zsh to default shell
+        chsh -s $(which zsh)
+    # get .zshrc and apply
+        wget -O ~/.zshrc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/.zshrc
+    # get scripts
+        mkdir ~/Scripts
+        wget -O ~/Scripts/CommandList.sh https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/scripts/CommandList.sh
+# pipes
+    make install
+    make PREFIX=$HOME/.local install
+
+
 # Prompt reboot
 printf "Reboot is recommended. Want to reboot? [Y/n] " 
 read doReboot
