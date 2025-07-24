@@ -23,8 +23,6 @@ export PATH="$HOME/bin:$PATH"
 
   # function aliases
     alias cmd="~/Scripts/CommandList.sh"
-    alias virshstart="~/Scripts/VirshStart.sh"
-    alias virshstop="~/Scripts/VirshStop.sh"
 
   # fun aliases
     alias claer="cowsay -f stegosaurus 'slow down the typing and make less errors'"
