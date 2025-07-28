@@ -5,8 +5,9 @@
 **Compatability** 
 
 - ~~Test compatability with Debian 12~~ (No longer priority, see README)
+- Add Void Linux compatability 
 
 **Configs**
 
 - Research installing personal KDE configuration
-- Add .zshrc config to install
+- Research installing konsole profile (colors, font, etc.)
