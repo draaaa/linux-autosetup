@@ -41,12 +41,12 @@ fi
 if [ "$packageManager" = "pacman" ]; then
     sudo pacman -Syu  # no '--noconfirm' because of the arch horror stories and updates bricking installs  
     # Dependencies
-        sudo pacman -S --noconfirm wget curl zsh tldr cowsay
+        sudo pacman -S --noconfirm wget git zsh tldr cowsay
         # pokemon-colorscripts
             yay -S --noconfirm pokemon-colorscripts-git
-        # zinit - uses the official method given by the zinit project
-            bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
-            zinit self-update
+        # zinit
+        mkdir ~/.zinit
+        git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
     # Everything else
         sudo pacman -S --noconfirm fastfetch
         sudo pacman -S --noconfirm ufw
@@ -54,14 +54,14 @@ if [ "$packageManager" = "pacman" ]; then
 elif [ "$packageManager" = "apt" ]; then
     sudo apt update && sudo apt upgrade -y
     # Dependencies
-        sudo apt install -y wget curl zsh tldr cowsay
+        sudo apt install -y wget git zsh tldr cowsay
         # pokemon-colorscripts
             git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
             cd pokemon-colorscripts
             sudo ./install.sh
         # zinit - uses the official method given by the zinit project
-            bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"    
-            zinit self-update
+            mkdir ~/.zinit
+            git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
     # Everything else
         sudo apt install -y fastfetch
         sudo apt install -y ufw
@@ -71,27 +71,24 @@ elif [ "$packageManager" = "aptDeb12" ]; then
     sudo apt update && sudo apt upgrade -y
     # Dependencies
         sudo apt install -y wget zsh
-    # Everything else
         # fastfetch
             wget -O fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb # For now, we can just use one version. Maybe look into using the newest version later
             sudo apt install -y ./fastfetch.deb
             rm fastfetch.deb
-        # zinit - uses the official method given by the zinit project
-            bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"    
-
+    # Everything else
         sudo apt install -y ufw
 
 elif [ "$packageManager" = "dnf" ]; then
     sudo dnf upgrade -y --refresh
     # Dependencies
-        sudo dnf install -y wget curl zsh tldr cowsay
+        sudo dnf install -y wget git zsh tldr cowsay
         # pokemon-colorscripts
             git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
             cd pokemon-colorscripts
             sudo ./install.sh
         # zinit - uses the official method given by the zinit project
-            bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
-            zinit self-update
+            mkdir ~/.zinit
+            git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
     # Everything else
         sudo dnf install -y fastfetch
         sudo dnf install -y ufw
