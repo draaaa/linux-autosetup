@@ -8,9 +8,11 @@ fastfetch
 tldr
 
 **Apps**
+
 N/A
 
 **Fun Stuff**
+
 cowsay
 pipes
 pokemon-colorscripts
