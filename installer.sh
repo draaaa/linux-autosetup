@@ -41,9 +41,12 @@ fi
 if [ "$packageManager" = "pacman" ]; then
     sudo pacman -Syu  # no '--noconfirm' because of the arch horror stories and updates bricking installs  
     # Dependencies
-        sudo pacman -S --noconfirm wget zsh tldr cowsay
+        sudo pacman -S --noconfirm wget curl zsh tldr cowsay
         # pokemon-colorscripts
             yay -S --noconfirm pokemon-colorscripts-git
+        # zinit - uses the official method given by the zinit project
+            bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
+            zinit self-update
     # Everything else
         sudo pacman -S --noconfirm fastfetch
         sudo pacman -S --noconfirm ufw
@@ -51,14 +54,18 @@ if [ "$packageManager" = "pacman" ]; then
 elif [ "$packageManager" = "apt" ]; then
     sudo apt update && sudo apt upgrade -y
     # Dependencies
-        sudo apt install -y wget zsh tldr cowsay
+        sudo apt install -y wget curl zsh tldr cowsay
         # pokemon-colorscripts
             git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
             cd pokemon-colorscripts
             sudo ./install.sh
+        # zinit - uses the official method given by the zinit project
+            bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"    
+            zinit self-update
     # Everything else
         sudo apt install -y fastfetch
         sudo apt install -y ufw
+
 # Untested, no longer priority for updates
 elif [ "$packageManager" = "aptDeb12" ]; then 
     sudo apt update && sudo apt upgrade -y
@@ -69,16 +76,22 @@ elif [ "$packageManager" = "aptDeb12" ]; then
             wget -O fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb # For now, we can just use one version. Maybe look into using the newest version later
             sudo apt install -y ./fastfetch.deb
             rm fastfetch.deb
+        # zinit - uses the official method given by the zinit project
+            bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"    
+
         sudo apt install -y ufw
 
 elif [ "$packageManager" = "dnf" ]; then
     sudo dnf upgrade -y --refresh
     # Dependencies
-        sudo dnf install -y wget zsh tldr cowsay
+        sudo dnf install -y wget curl zsh tldr cowsay
         # pokemon-colorscripts
             git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
             cd pokemon-colorscripts
             sudo ./install.sh
+        # zinit - uses the official method given by the zinit project
+            bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
+            zinit self-update
     # Everything else
         sudo dnf install -y fastfetch
         sudo dnf install -y ufw
@@ -109,6 +122,8 @@ printf "Reboot is recommended. Want to reboot? [Y/n] "
 read doReboot
 if [[ "$doReboot" == "" || "$doReboot" == "y" || "$doReboot" == "Y" ]]; then
     sudo reboot
+else
+    printf "In order for zsh to properly become the default, you must at minimum log out then log back in.\nDoing so without rebooting may cause zinit to fail to work properly with zsh.\nAn alternative method will be found for this, but will be added at a later date.\nWhen you log out and log back in, you should run 'source ~/.zshrc' and 'source ~/.zinit/bin/zinit.zsh'"
 fi
 
 exit 0
