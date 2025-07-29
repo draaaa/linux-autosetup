@@ -5,7 +5,6 @@
 **Compatability** 
 
 - ~~Test compatability with Debian 12~~ (No longer priority, see README)
-- Add Void Linux compatability 
 
 **Configs**
 
