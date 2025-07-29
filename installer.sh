@@ -6,7 +6,7 @@ cat << EOF
 /_/_/_/ /_/\__,_/_/|_|      \__,_/\__,_/\__/\____/____/\___/\__/\__,_/ .___/ 
                                                                     /_/      
 EOF
-echo -e "made by draaaa :3\npls remember to submit an issue to the github if there are problems\nsupported distros - Arch, Debian 13, Debian 12***\n\n"
+echo -e "made by draaaa :3\npls remember to submit an issue to the github if there are problems\nsupported distros - Arch, EndeavourOS***, Debian 13, Debian 12***, Void\n\n"
 
 
 printf "Have you made your user a sudoer? [Y/n] "
@@ -21,7 +21,7 @@ fi
 packageManager=""
 source /etc/os-release
 
-if [ "$ID" = "arch" || "$ID" = "endeavouros" ]; then
+if [ "$ID" = "arch" ] || [ "$ID" = "endeavouros" ]; then
     packageManager="pacman"
 
 elif [ "$ID" = "debian" ]; then  # Pretty much all other apt utilizing distros will go here as well. Likely to remove the special Debian 12 case
@@ -38,7 +38,7 @@ elif [ "$ID" = "void" ]; then
     packageManager="xbps"
 
 else
-    echo -e "Your distro may be unsupported, or there may be an error with detecting your distro. The current list of supported distros are;\nArch\nDebian 13\nFedora (testing)\n If you are on Fedora, please submit an issue regarding a bad detection method.\nIf you are NOT on Fedora, please submit an issue saying that your distro is not supported."
+    echo -e "Your distro may be unsupported, or there may be an error with detecting your distro. The current list of supported distros are;\nArch\nEndeavourOS\nDebian 13\nFedora\nVoid\n\nIf your distro is not supported, please submit an issue requesting that your distro of choice be supported.\nDownstream distros may not be supported at the moment due to the current detection method being used.\n\n"
     exit 1
 fi
 
