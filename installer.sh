@@ -23,14 +23,20 @@ source /etc/os-release
 
 if [ "$ID" = "arch" ]; then
     packageManager="pacman"
+
 elif [ "$ID" = "debian" ]; then  # Pretty much all other apt utilizing distros will go here as well. Likely to remove the special Debian 12 case
     if [ "$VERSION_ID" = "13" ]; then
         packageManager="apt"
     elif [ "$VERSION_ID" = "12" ]; then  # Untested, no longer priority for updates
         packageManager="aptDeb12"  
     fi
-elif [ "$ID" = "fedora" ]; then  # Untested
+
+elif [ "$ID" = "fedora" ]; then
     packageManager="dnf"
+
+elif [ "$ID" = "void" ]; then
+    packageManager="xbps"
+
 else
     echo -e "Your distro may be unsupported, or there may be an error with detecting your distro. The current list of supported distros are;\nArch\nDebian 13\nFedora (testing)\n If you are on Fedora, please submit an issue regarding a bad detection method.\nIf you are NOT on Fedora, please submit an issue saying that your distro is not supported."
     exit 1
@@ -59,7 +65,7 @@ elif [ "$packageManager" = "apt" ]; then
             git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
             cd pokemon-colorscripts
             sudo ./install.sh
-        # zinit - uses the official method given by the zinit project
+        # zinit
             mkdir ~/.zinit
             git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
     # Everything else
@@ -86,12 +92,27 @@ elif [ "$packageManager" = "dnf" ]; then
             git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
             cd pokemon-colorscripts
             sudo ./install.sh
-        # zinit - uses the official method given by the zinit project
+        # zinit
             mkdir ~/.zinit
             git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
     # Everything else
         sudo dnf install -y fastfetch
         sudo dnf install -y ufw
+
+elif [ "$packageManager" = "xbps" ]; then
+    sudo xbps-install -Syu
+    # Dependencies
+        sudo xbps-install -y wget git zsh tldr cowsay
+        # pokemon-colorscripts
+            git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
+            cd pokemon-colorscripts
+            sudo ./install.sh
+        # zinit
+            mkdir ~/.zinit
+            git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
+    # Everything else
+        sudo xbps-install -y fastfetch
+        sudo xbps-install -y ufw
 fi
 
 
@@ -109,6 +130,7 @@ fi
     # get scripts
         mkdir ~/Scripts
         wget -O ~/Scripts/CommandList.sh https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/scripts/CommandList.sh
+        chmod +x ~/Scripts/CommandList.sh
 # pipes
     make install
     make PREFIX=$HOME/.local install
