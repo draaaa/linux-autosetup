@@ -6,7 +6,7 @@ cat << EOF
 /_/_/_/ /_/\__,_/_/|_|      \__,_/\__,_/\__/\____/____/\___/\__/\__,_/ .___/ 
                                                                     /_/      
 EOF
-echo -e "made by draaaa :3\npls remember to submit an issue to the github if there are problems\nsupported distros - Arch, EndeavourOS***, Debian 13, Debian 12***, Void\n\n"
+echo -e "made by draaaa :3\npls remember to submit an issue to the github if there are problems\n\n"
 
 
 printf "Have you made your user a sudoer? [Y/n] "
@@ -24,12 +24,8 @@ source /etc/os-release
 if [ "$ID" = "arch" ] || [ "$ID" = "endeavouros" ]; then
     packageManager="pacman"
 
-elif [ "$ID" = "debian" ]; then  # Pretty much all other apt utilizing distros will go here as well. Likely to remove the special Debian 12 case
-    if [ "$VERSION_ID" = "13" ]; then
-        packageManager="apt"
-    elif [ "$VERSION_ID" = "12" ]; then  # Untested, no longer priority for updates
-        packageManager="aptDeb12"  
-    fi
+elif [ "$ID" = "debian" ] || [[ "$ID_LIKE" == *debian* ]]; then  # Pretty much all other apt utilizing distros will go here as well. Likely to remove the special Debian 12 case
+    packageManager="apt"
 
 elif [ "$ID" = "fedora" ]; then
     packageManager="dnf"
@@ -38,7 +34,7 @@ elif [ "$ID" = "void" ]; then
     packageManager="xbps"
 
 else
-    echo -e "Your distro may be unsupported, or there may be an error with detecting your distro. The current list of supported distros are;\nArch\nEndeavourOS\nDebian 13\nFedora\nVoid\n\nIf your distro is not supported, please submit an issue requesting that your distro of choice be supported.\nDownstream distros may not be supported at the moment due to the current detection method being used.\n\n"
+    echo -e "Your distro may be unsupported, or there may be an error with detecting your distro. Currently, the detection method is being reworked. If your distro is downstream from a supported distro then it's detection may not have been updated yet.\nPlease consult the list of supported distros, and create an issue saying that your distro is unsupported.\n"
     exit 1
 fi
 
@@ -69,19 +65,10 @@ elif [ "$packageManager" = "apt" ]; then
             mkdir ~/.zinit
             git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
     # Everything else
-        sudo apt install -y fastfetch
-        sudo apt install -y ufw
-
-# Untested, no longer priority for updates
-elif [ "$packageManager" = "aptDeb12" ]; then 
-    sudo apt update && sudo apt upgrade -y
-    # Dependencies
-        sudo apt install -y wget zsh
-        # fastfetch
-            wget -O fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb # For now, we can just use one version. Maybe look into using the newest version later
-            sudo apt install -y ./fastfetch.deb
-            rm fastfetch.deb
-    # Everything else
+        if ! sudo apt install -y fastfetch; then  # some distro versions dont have fastfetch in the package index, so we can use an alternate method
+            wget -O ~/Downloads/fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb
+            sudo apt install ~/Downloads/fastfetch.deb
+        fi
         sudo apt install -y ufw
 
 elif [ "$packageManager" = "dnf" ]; then
