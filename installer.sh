@@ -21,7 +21,7 @@ fi
 packageManager=""
 source /etc/os-release
 
-if [ "$ID" = "arch" ] || [ "$ID" = "endeavouros" ]; then
+if [ "$ID" = "arch" ] || [[ "$ID_LIKE" == *arch* ]]; then
     packageManager="pacman"
 
 elif [ "$ID" = "debian" ] || [[ "$ID_LIKE" == *debian* ]]; then  # Pretty much all other apt utilizing distros will go here as well. Likely to remove the special Debian 12 case
