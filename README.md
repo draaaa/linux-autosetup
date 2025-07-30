@@ -1,6 +1,6 @@
 **IMPORTANT**
 
-*Debian 13 (Trixie) was announced to be released on August 9th. Because of the update, Debian 12 support will no longer be prioritized. There will still be support for Debian 12 eventually, but compatability with Debian 12 does not currently fit the main purpose of this project, being to make it easier to reinstall a distro for daily use. It will likely be added at some point in the lifespan of this project's development, but I have no estimate as to when that will be. For now, the focus will shift to compatability with Fedora 42+.*
+*Debian 13 (Trixie) was announced to be released on August 9th. Because of the update, Debian 12 support will no longer be prioritized. There will still be support for Debian 12 eventually, but compatability with Debian 12 does not currently fit the main purpose of this project, being to make it easier to reinstall a distro for daily use. It will likely be added at some point in the lifespan of this project's development, but I have no estimate as to when that will be. For now, the focus will shift to tackling the compatibility issues.*
 
 **Purpose of linux-autosetup**
 
