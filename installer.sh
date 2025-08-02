@@ -118,9 +118,6 @@ fi
         mkdir ~/Scripts
         wget -O ~/Scripts/CommandList.sh https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/scripts/CommandList.sh
         chmod +x ~/Scripts/CommandList.sh
-# pipes
-    make install
-    make PREFIX=$HOME/.local install
 
 
 # Prompt reboot
