@@ -35,9 +35,6 @@ echo -e ""
 
 # fun commands
 echo -e "${YELLOW}fun${RESET}"
-echo -e "  ${BRIGHT_YELLOW}pipes${RESET}"
-echo -e "    executes ${MAGENTA}pipes.sh${RESET}, which creates pipes in the terminal"
-echo -e ""
 echo -e "  ${BRIGHT_YELLOW}cowsay "str"${RESET}"
 echo -e "    funny cow says words"
 echo -e ""
