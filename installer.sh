@@ -1,22 +1,3 @@
-packageInstall () {
-    case $packageManager in
-        pacman)
-            sudo pacman -S --noconfirm "$@" ;;
-        apt)
-            sudo apt install -y "$@" ;;
-        dnf)
-            sudo dnf install -y "$@" ;;
-        xbps)
-            sudo xbps-install -y "$@" ;;
-        *)
-            printf "Your distro is using an unsupported package manager, or the distro was detected incorrectly.\nPlease create an issue on the main repository with the name of your distro and package manager."
-            exit 1
-            ;;
-    esac
-}
-
-
-
 cat << EOF
     ___                                    __                  __            
    / (_)___  __  ___  __      ____ ___  __/ /_____  ________  / /___  ______ 
@@ -60,21 +41,56 @@ else
     exit 1
 fi
 
+packageInstall () {
+    case $packageManager in
+        pacman)
+            sudo pacman -S --noconfirm "$@" ;;
+        apt)
+            sudo apt install -y "$@" ;;
+        dnf)
+            sudo dnf install -y "$@" ;;
+        xbps)
+            sudo xbps-install -y "$@" ;;
+        *)
+            printf "Your distro is using an unsupported package manager, or the distro was detected incorrectly.\nPlease create an issue on the main repository with the name of your distro and package manager."
+            exit 1
+            ;;
+    esac
+}
+
 
 # !!!INSTALLER!!!
+packageInstall wget git zsh tldr cowsay ufw flatpak
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 printf "\n\n\n\n\n\n\n\n\n\n"
 
+
 # browser
-printf "What browser do you want to install? [N/1]\n[N] - None\n[1] - Firefox\n"
+printf "What browser do you want to install? [N/1/2/3]\n[N] - None\n[1] - Firefox\n[2] - LibreWolf\n[3] - Zen\n"
 read userBrowser
 if [[ "$userBrowser" == "" || "$userBrowser" == "n" || "$userBrowser" == "N" ]]; then  
     echo "No browser chosen"
-elif [[ "$userBrowser" == "1"]]; then
+elif [[ "$userBrowser" == "1" ]]; then
     packageInstall firefox
+elif [[ "$userBrowser" == "2" ]]; then
+    if [[ "$ID" = "arch" || "$ID_LIKE" == *arch* ]]; then
+        git clone https://aur.archlinux.org/librewolf.git
+        cd librewolf
+        makepkg -si
+    elif [[ "$ID" = "debian" || "$ID_LIKE" == *debian* ]]; then
+        sudo apt update && sudo apt install extrepo -y
+        sudo extrepo enable librewolf
+        sudo apt update && sudo apt install librewolf -y
+    elif [[ "$ID" = "fedora" ]]; then
+        curl -fsSL https://repo.librewolf.net/librewolf.repo | pkexec tee /etc/yum.repos.d/librewolf.repo
+        sudo dnf install librewolf
+    else
+        flatpak install flathub io.gitlab.librewolf-community
+    fi
+elif [[ "$userBrowser" == "3" ]]; then
+    flatpak install flathub app.zen_browser.zen
 
 fi
-
-packageInstall wget git zsh tldr cowsay ufw 
 
 # fastfetch
 if [[ "$packageManager" = "apt" ]]; then
