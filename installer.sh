@@ -1,3 +1,22 @@
+packageInstall () {
+    case $packageManager in
+        pacman)
+            sudo pacman -S --noconfirm "$@" ;;
+        apt)
+            sudo apt install -y "$@" ;;
+        dnf)
+            sudo dnf install -y "$@" ;;
+        xbps)
+            sudo xbps-install -y "$@" ;;
+        *)
+            printf "Your distro is using an unsupported package manager, or the distro was detected incorrectly.\nPlease create an issue on the main repository with the name of your distro and package manager."
+            exit 1
+            ;;
+    esac
+}
+
+
+
 cat << EOF
     ___                                    __                  __            
    / (_)___  __  ___  __      ____ ___  __/ /_____  ________  / /___  ______ 
@@ -7,7 +26,6 @@ cat << EOF
                                                                     /_/      
 EOF
 echo -e "made by draaaa :3\npls remember to submit an issue to the github if there are problems\n\n"
-
 
 printf "Have you made your user a sudoer? [Y/n] "
 read isSudoer
@@ -44,22 +62,17 @@ fi
 
 
 # !!!INSTALLER!!!
-packageInstall () {
-    case $packageManager in
-        pacman)
-            sudo pacman -S --noconfirm "$@" ;;
-        apt)
-            sudo apt install -y "$@" ;;
-        dnf)
-            sudo dnf install -y "$@" ;;
-        xbps)
-            sudo xbps-install -y "$@" ;;
-        *)
-            printf "Your distro is using an unsupported package manager, or the distro was detected incorrectly.\nPlease create an issue on the main repository with the name of your distro and package manager."
-            exit 1
-            ;;
-    esac
-}
+printf "\n\n\n\n\n\n\n\n\n\n"
+
+# browser
+printf "What browser do you want to install? [N/1]\n[N] - None\n[1] - Firefox\n"
+read userBrowser
+if [[ "$userBrowser" == "" || "$userBrowser" == "n" || "$userBrowser" == "N" ]]; then  
+    echo "No browser chosen"
+elif [[ "$userBrowser" == "1"]]; then
+    packageInstall firefox
+
+fi
 
 packageInstall wget git zsh tldr cowsay ufw 
 
