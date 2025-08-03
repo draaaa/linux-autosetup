@@ -17,21 +17,25 @@ if [[ "$isSudoer" != "" && "$isSudoer" != "y" && "$isSudoer" != "Y" ]]; then
 fi
 
 
-# Check Distro
+# !!!DETECT DISTRO!!!
 packageManager=""
 source /etc/os-release
 
-if [ "$ID" = "arch" ] || [[ "$ID_LIKE" == *arch* ]]; then
+if [[ "$ID" = "arch" || "$ID_LIKE" == *arch* ]]; then
     packageManager="pacman"
+    sudo pacman -Syu
 
-elif [ "$ID" = "debian" ] || [[ "$ID_LIKE" == *debian* ]]; then  # Pretty much all other apt utilizing distros will go here as well. Likely to remove the special Debian 12 case
+elif [[ "$ID" = "debian" || "$ID_LIKE" == *debian* ]]; then  # Pretty much all other apt utilizing distros will go here as well. Likely to remove the special Debian 12 case
     packageManager="apt"
+    sudo apt update && sudo apt upgrade -y
 
-elif [ "$ID" = "fedora" ]; then
+elif [[ "$ID" = "fedora" ]]; then
     packageManager="dnf"
+    sudo dnf upgrade -y --refresh
 
-elif [ "$ID" = "void" ]; then
+elif [[ "$ID" = "void" ]]; then
     packageManager="xbps"
+    sudo xbps-install -Syu
 
 else
     echo -e "Your distro may be unsupported, or there may be an error with detecting your distro. Currently, the detection method is being reworked. If your distro is downstream from a supported distro then it's detection may not have been updated yet.\nPlease consult the list of supported distros, and create an issue saying that your distro is unsupported.\n"
@@ -39,70 +43,47 @@ else
 fi
 
 
-# Later we can set up the install commands to be one line rather than multiple. Just seems unnecessary to have multiple lines
-if [ "$packageManager" = "pacman" ]; then
-    sudo pacman -Syu  # no '--noconfirm' because of the arch horror stories and updates bricking installs  
-    # Dependencies
-        sudo pacman -S --noconfirm wget git zsh tldr cowsay
-        # pokemon-colorscripts
-            yay -S --noconfirm pokemon-colorscripts-git
-        # zinit
-        mkdir ~/.zinit
-        git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
-    # Everything else
-        sudo pacman -S --noconfirm fastfetch
-        sudo pacman -S --noconfirm ufw
+# !!!INSTALLER!!!
+packageInstall () {
+    case $packageManager in
+        pacman)
+            sudo pacman -S --noconfirm "$@" ;;
+        apt)
+            sudo apt install -y "$@" ;;
+        dnf)
+            sudo dnf install -y "$@" ;;
+        xbps)
+            sudo xbps-install -y "$@" ;;
+        *)
+            printf "Your distro is using an unsupported package manager, or the distro was detected incorrectly.\nPlease create an issue on the main repository with the name of your distro and package manager."
+            exit 1
+            ;;
+    esac
+}
 
-elif [ "$packageManager" = "apt" ]; then
-    sudo apt update && sudo apt upgrade -y
-    # Dependencies
-        sudo apt install -y wget git zsh tldr cowsay
-        # pokemon-colorscripts
-            git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
-            cd pokemon-colorscripts
-            sudo ./install.sh
-        # zinit
-            mkdir ~/.zinit
-            git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
-    # Everything else
-        if ! sudo apt install -y fastfetch; then  # some distro versions dont have fastfetch in the package index, so we can use an alternate method
-            wget -O ~/Downloads/fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb
-            sudo apt install ~/Downloads/fastfetch.deb
-        fi
-        sudo apt install -y ufw
+packageInstall wget git zsh tldr cowsay ufw 
 
-elif [ "$packageManager" = "dnf" ]; then
-    sudo dnf upgrade -y --refresh
-    # Dependencies
-        sudo dnf install -y wget git zsh tldr cowsay
-        # pokemon-colorscripts
-            git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
-            cd pokemon-colorscripts
-            sudo ./install.sh
-        # zinit
-            mkdir ~/.zinit
-            git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
-    # Everything else
-        sudo dnf install -y fastfetch
-        sudo dnf install -y ufw
-
-elif [ "$packageManager" = "xbps" ]; then
-    sudo xbps-install -Syu
-    # Dependencies
-        sudo xbps-install -y wget git zsh tldr cowsay
-        # pokemon-colorscripts
-            git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
-            cd pokemon-colorscripts
-            sudo ./install.sh
-        # zinit
-            mkdir ~/.zinit
-            git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
-    # Everything else
-        sudo xbps-install -y fastfetch
-        sudo xbps-install -y ufw
+# fastfetch
+if [[ "$packageManager" = "apt" ]]; then
+    if ! packageInstall fastfetch; then
+        wget -O ~/Downloads/fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb
+        sudo apt install ~/Downloads/fastfetch.deb
+    fi
+else
+    packageInstall fastfetch
 fi
 
+# pokemon-colorscripts
+git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
+cd pokemon-colorscripts
+sudo ./install.sh
 
+# zinit
+mkdir ~/.zinit
+git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
+
+
+# !!!CONFIGS!!!
 # Use the raw github links like this - https://raw.githubusercontent.com/draaaa/linux-autosetup/main/file
 # fastfetch
     mkdir -p ~/.config/fastfetch
