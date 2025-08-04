@@ -20,19 +20,19 @@ fi
 packageManager=""
 source /etc/os-release
 
-if [[ "$ID" = "arch" || "$ID_LIKE" == *arch* ]]; then
+if [[ "$ID" == "arch" || "$ID_LIKE" == *arch* ]]; then
     packageManager="pacman"
     sudo pacman -Syu
 
-elif [[ "$ID" = "debian" || "$ID_LIKE" == *debian* ]]; then  # Pretty much all other apt utilizing distros will go here as well. Likely to remove the special Debian 12 case
+elif [[ "$ID" == "debian" || "$ID_LIKE" == *debian* ]]; then  # Pretty much all other apt utilizing distros will go here as well. Likely to remove the special Debian 12 case
     packageManager="apt"
     sudo apt update && sudo apt upgrade -y
 
-elif [[ "$ID" = "fedora" ]]; then
+elif [[ "$ID" == "fedora" ]]; then
     packageManager="dnf"
     sudo dnf upgrade -y --refresh
 
-elif [[ "$ID" = "void" ]]; then
+elif [[ "$ID" == "void" ]]; then
     packageManager="xbps"
     sudo xbps-install -Syu
 
@@ -111,8 +111,27 @@ while true; do
     fi
 done
 
+# discord
+printf "Do you want to install Discord? [Y/n] "
+read discordInstall
+if [[ "$discordInstall" == "" || "$discordInstall" == "y" || "$discordInstall" == "Y" ]]; then
+    if [[ "$packageManager" == "pacman" ]]; then
+        packageInstall discord
+    elif [[ "$packageManager" == "apt" ]]; then
+        if ! packageInstall discord; then
+            wget -O ~/Downloads/discord.deb https://discord.com/api/download?platform=linux&format=deb
+            sudo apt install ~/Downloads/discord.deb
+        fi
+    else
+        # Flatpak is starting to feel like cheating. I should find other methods rather than using it as a copout. 
+        flatpak install flathub com.discordapp.Discord
+    fi
+else
+    echo "Not installing discord"
+fi
+
 # fastfetch
-if [[ "$packageManager" = "apt" ]]; then
+if [[ "$packageManager" == "apt" ]]; then
     if ! packageInstall fastfetch; then
         wget -O ~/Downloads/fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb
         sudo apt install ~/Downloads/fastfetch.deb
