@@ -66,31 +66,50 @@ printf "\n\n\n\n\n\n\n\n\n\n"
 
 
 # browser
-printf "What browser do you want to install? [N/1/2/3]\n[N] - None\n[1] - Firefox\n[2] - LibreWolf\n[3] - Zen\n"
-read userBrowser
-if [[ "$userBrowser" == "" || "$userBrowser" == "n" || "$userBrowser" == "N" ]]; then  
-    echo "No browser chosen"
-elif [[ "$userBrowser" == "1" ]]; then
-    packageInstall firefox
-elif [[ "$userBrowser" == "2" ]]; then
-    if [[ "$ID" = "arch" || "$ID_LIKE" == *arch* ]]; then
-        git clone https://aur.archlinux.org/librewolf.git
-        cd librewolf
-        makepkg -si
-    elif [[ "$ID" = "debian" || "$ID_LIKE" == *debian* ]]; then
-        sudo apt update && sudo apt install extrepo -y
-        sudo extrepo enable librewolf
-        sudo apt update && sudo apt install librewolf -y
-    elif [[ "$ID" = "fedora" ]]; then
-        curl -fsSL https://repo.librewolf.net/librewolf.repo | pkexec tee /etc/yum.repos.d/librewolf.repo
-        sudo dnf install librewolf
-    else
+while true; do
+    printf "\nWhat browser do you want to install? [N/1/2/3]\n[N] - None\n[1] - Firefox\n[2] - LibreWolf\n[3] - Zen\n[4] - Brave\n[5] - Chrome\n "
+    read userBrowser
+    if [[ "$userBrowser" == "" || "$userBrowser" == "n" || "$userBrowser" == "N" ]]; then  
+        echo "No browser chosen"
+        break
+    elif [[ "$userBrowser" == "1" ]]; then
+        packageInstall firefox
+        break
+    elif [[ "$userBrowser" == "2" ]]; then
         flatpak install flathub io.gitlab.librewolf-community
+        break
+    elif [[ "$userBrowser" == "3" ]]; then
+        flatpak install flathub app.zen_browser.zen
+        break
+    elif [[ "$userBrowser" == "4" ]]; then
+        flatpak install flathub com.brave.Browser
+        break
+    elif [[ "$userBrowser" == "5" ]]; then
+        printf "Are you sure? [y/N] "
+        read confirm1
+        if [[ "$confirm1" == "y" ]]; then
+            printf "Are you ABSOLUTELY CERTAIN that you want to use Google Chrome on linux, and not some other option? [y/N] "
+            read confirm2
+            if [[ "$confirm2" == "y" ]]; then
+                printf "Last time, I promise. I just wanna make sure you're not doing this by mistake. [y/N] "
+                read confirm3
+                if [[ "$confirm3" == "y" ]]; then
+                    flatpak install flathub com.google.Chrome
+                    break
+                else
+                    continue
+                fi
+            else
+                continue
+            fi
+        else
+            continue
+        fi
+    else
+        echo "Invalid option - please use the numbers or 'N' to not install a browser"
+        continue
     fi
-elif [[ "$userBrowser" == "3" ]]; then
-    flatpak install flathub app.zen_browser.zen
-
-fi
+done
 
 # fastfetch
 if [[ "$packageManager" = "apt" ]]; then
@@ -115,19 +134,18 @@ git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
 # !!!CONFIGS!!!
 # Use the raw github links like this - https://raw.githubusercontent.com/draaaa/linux-autosetup/main/file
 # fastfetch
-    mkdir -p ~/.config/fastfetch
-    wget -O ~/.config/fastfetch/config.jsonc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/fastfetch/config.jsonc
+mkdir -p ~/.config/fastfetch
+wget -O ~/.config/fastfetch/config.jsonc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/fastfetch/config.jsonc
+
 # ufw
-    sudo ufw enable
+sudo ufw enable
+
 # zsh
-    # set zsh to default shell
-        chsh -s $(which zsh)
-    # get .zshrc and apply
-        wget -O ~/.zshrc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/.zshrc
-    # get scripts
-        mkdir ~/Scripts
-        wget -O ~/Scripts/CommandList.sh https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/scripts/CommandList.sh
-        chmod +x ~/Scripts/CommandList.sh
+chsh -s $(which zsh)
+wget -O ~/.zshrc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/.zshrc
+mkdir ~/Scripts
+wget -O ~/Scripts/CommandList.sh https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/scripts/CommandList.sh
+chmod +x ~/Scripts/CommandList.sh
 
 
 # Prompt reboot
