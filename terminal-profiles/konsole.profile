@@ -1,6 +1,6 @@
 [Appearance]
 ColorScheme=Brogrammer
-Font=JetBrainsMonoNL Nerd Font Propo,12,-1,5,400,1,0,0,0,0,0,0,0,0,0,1,Italic
+Font=Monospace,12,-1,5,400,1,0,0,0,0,0,0,0,0,0,1
 
 [Cursor Options]
 CursorShape=1
@@ -13,6 +13,4 @@ TerminalRows=50
 
 [Scrolling]
 HistoryMode=2
-
-
 
