@@ -167,10 +167,9 @@ wget -O ~/Scripts/CommandList.sh https://raw.githubusercontent.com/draaaa/linux-
 chmod +x ~/Scripts/CommandList.sh
 
 # terminal emmulators
-terminalEmm=$(ps -p $(ps -o ppid= -p $$) -o comm=)
-if [[ "$terminalEmm" == "konsole" ]]; then
-    wget -O ~/.local/share/konsole https://raw.githubusercontent.com/draaaa/linux-autosetup/main/terminal-profiles/Brogrammer.colorscheme
-    wget -O ~/.local/share/konsole https://raw.githubusercontent.com/draaaa/linux-autosetup/main/terminal-profiles/konsole.profile
+if [[ -n "$KONSOLE_VERSION" ]]; then
+    wget -O ~/.local/share/konsole/Brogrammer.colorscheme https://raw.githubusercontent.com/draaaa/linux-autosetup/main/terminal-profiles/Brogrammer.colorscheme
+    wget -O ~/.local/share/konsole/las_profile.profile https://raw.githubusercontent.com/draaaa/linux-autosetup/main/terminal-profiles/konsole.profile
 else
     printf "Your terminal emmulator may not be supported yet.\nAt the moment, I mostly use konsole, so support for your terminal may not exist yet.\nPlease submit an issue requesting support for your terminal emmulator, and I will work to create a profile and add it to the repo.\n"
 fi
