@@ -60,12 +60,26 @@ packageInstall () {
 
 
 # !!!INSTALLER!!!
-packageInstall wget git zsh tldr cowsay ufw flatpak
+packageInstall wget git zsh cowsay ufw flatpak
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-printf "\n\n\n\n\n\n\n\n\n\n"
 
+# fastfetch
+if [[ "$packageManager" == "apt" ]]; then
+    if ! packageInstall fastfetch; then
+        wget -O ~/Downloads/fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb
+        sudo apt install ~/Downloads/fastfetch.deb
+    fi
+else
+    packageInstall fastfetch
+fi
+
+#tldr (tealdeer)
+if ! packageInstall tldr; then
+    packageInstall tealdeer
+fi
 
 # browser
+printf "\n\n\n\n\n\n\n\n\n\n"
 while true; do
     printf "\nWhat browser do you want to install? [N/1/2/3]\n[N] - None\n[1] - Firefox\n[2] - LibreWolf\n[3] - Zen\n[4] - Brave\n[5] - Chrome\n "
     read userBrowser
@@ -128,16 +142,6 @@ if [[ "$discordInstall" == "" || "$discordInstall" == "y" || "$discordInstall" =
     fi
 else
     echo "Not installing discord"
-fi
-
-# fastfetch
-if [[ "$packageManager" == "apt" ]]; then
-    if ! packageInstall fastfetch; then
-        wget -O ~/Downloads/fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb
-        sudo apt install ~/Downloads/fastfetch.deb
-    fi
-else
-    packageInstall fastfetch
 fi
 
 # pokemon-colorscripts
