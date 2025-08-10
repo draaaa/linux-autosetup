@@ -10,6 +10,8 @@ Name=Profile 1
 Parent=FALLBACK/
 TerminalColumns=189
 TerminalRows=50
+UseCustomCommand=true
+Command=/usr/bin/zsh
 
 [Scrolling]
 HistoryMode=2
