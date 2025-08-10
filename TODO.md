@@ -6,4 +6,4 @@
 
 # Configs
 - Research installing personal KDE configuration
-- Research installing konsole profile (colors, font, etc.)
+- Setting the installed konsole profile as the default profile in konsole
