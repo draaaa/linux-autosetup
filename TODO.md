@@ -1,5 +1,6 @@
 # General
 - Add more packages and apps
+- Research using a modified Discord client
 
 # Compatability
 - ~~Test compatability with Debian 12~~ (No longer priority, see README)
