@@ -74,6 +74,7 @@ if [[ "$desktopEnvironment" == *kde* ]]; then
     # kde code here
 else
     deskEnvDetected="No supported environment detected; no profiles will be applied"
+fi
 
 
 # !!!INSTALLER!!!
