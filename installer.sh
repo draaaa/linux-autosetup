@@ -60,22 +60,22 @@ packageInstall () {
 
 
 # !!!INSTALLER!!!
-packageInstall wget git zsh cowsay ufw flatpak
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+sudo packageInstall wget git zsh cowsay ufw flatpak
+sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 # fastfetch
 if [[ "$packageManager" == "apt" ]]; then
-    if ! packageInstall fastfetch; then
+    if ! sudo packageInstall fastfetch; then
         wget -O ~/Downloads/fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb
         sudo apt install ~/Downloads/fastfetch.deb
     fi
 else
-    packageInstall fastfetch
+    sudo packageInstall fastfetch
 fi
 
 #tldr (tealdeer)
-if ! packageInstall tldr; then
-    packageInstall tealdeer
+if ! sudo packageInstall tldr; then
+    sudo packageInstall tealdeer
 fi
 
 # browser
@@ -87,16 +87,16 @@ while true; do
         echo "No browser chosen"
         break
     elif [[ "$userBrowser" == "1" ]]; then
-        packageInstall firefox
+        sudo packageInstall firefox
         break
     elif [[ "$userBrowser" == "2" ]]; then
-        flatpak install flathub io.gitlab.librewolf-community
+        sudo flatpak install flathub io.gitlab.librewolf-community
         break
     elif [[ "$userBrowser" == "3" ]]; then
-        flatpak install flathub app.zen_browser.zen
+        sudo flatpak install flathub app.zen_browser.zen
         break
     elif [[ "$userBrowser" == "4" ]]; then
-        flatpak install flathub com.brave.Browser
+        sudo flatpak install flathub com.brave.Browser
         break
     elif [[ "$userBrowser" == "5" ]]; then
         printf "Are you sure? [y/N] "
@@ -108,7 +108,7 @@ while true; do
                 printf "Last time, I promise. I just wanna make sure you're not doing this by mistake. [y/N] "
                 read confirm3
                 if [[ "$confirm3" == "y" ]]; then
-                    flatpak install flathub com.google.Chrome
+                    sudo flatpak install flathub com.google.Chrome
                     break
                 else
                     continue
@@ -130,7 +130,7 @@ printf "Do you want to install Discord? [Y/n] "
 read discordInstall
 if [[ "$discordInstall" == "" || "$discordInstall" == "y" || "$discordInstall" == "Y" ]]; then
     if [[ "$packageManager" == "pacman" ]]; then
-        packageInstall discord
+        sudo packageInstall discord
     elif [[ "$packageManager" == "apt" ]]; then
         if ! packageInstall discord; then
             wget -O ~/Downloads/discord.deb https://discord.com/api/download?platform=linux&format=deb
