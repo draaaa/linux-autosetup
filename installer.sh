@@ -1,3 +1,7 @@
+set -euo pipefail
+IFS=$'\n\t'
+trap 'echo "Error on line $LINENO\nPlease create an issue with the line number and a description of the error"; exit 1' ERR
+
 cat << EOF
     ___                                    __                  __            
    / (_)___  __  ___  __      ____ ___  __/ /_____  ________  / /___  ______ 
@@ -215,7 +219,7 @@ printf "\n\n\n\n\nSummary\nDesktop Environment - ${deskEnvDetected}\nTerminal Em
 # Prompt reboot
 printf "Reboot is recommended. Want to reboot? [Y/n] " 
 read doReboot
-if [[ "$doReboot" == "" || "${doReboot,,}" == "y"]]; then
+if [[ "$doReboot" == "" || "${doReboot,,}" == "y" ]]; then
     sudo reboot
 else
     printf "In order for zsh to properly become the default, you must at minimum log out then log back in.\nDoing so without rebooting may cause zinit to fail to work properly with zsh.\nAn alternative method will be found for this, but will be added at a later date.\nWhen you log out and log back in, you should run 'source ~/.zshrc' and 'source ~/.zinit/bin/zinit.zsh'"
