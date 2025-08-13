@@ -60,7 +60,7 @@ packageInstall () {
 
 
 # !!!INSTALLER!!!
-sudo packageInstall wget git zsh cowsay ufw flatpak
+packageInstall wget git zsh cowsay ufw flatpak
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 # fastfetch
@@ -70,12 +70,12 @@ if [[ "$packageManager" == "apt" ]]; then
         sudo apt install ~/Downloads/fastfetch.deb
     fi
 else
-    sudo packageInstall fastfetch
+    packageInstall fastfetch
 fi
 
 #tldr (tealdeer)
-if ! sudo packageInstall tldr; then
-    sudo packageInstall tealdeer
+if ! packageInstall tldr; then
+    packageInstall tealdeer
 fi
 
 # browser
@@ -87,7 +87,7 @@ while true; do
         echo "No browser chosen"
         break
     elif [[ "$userBrowser" == "1" ]]; then
-        sudo packageInstall firefox
+        packageInstall firefox
         break
     elif [[ "$userBrowser" == "2" ]]; then
         sudo flatpak install flathub io.gitlab.librewolf-community
@@ -130,7 +130,7 @@ printf "Do you want to install Discord? [Y/n] "
 read discordInstall
 if [[ "$discordInstall" == "" || "$discordInstall" == "y" || "$discordInstall" == "Y" ]]; then
     if [[ "$packageManager" == "pacman" ]]; then
-        sudo packageInstall discord
+        packageInstall discord
     elif [[ "$packageManager" == "apt" ]]; then
         if ! packageInstall discord; then
             wget -O ~/Downloads/discord.deb https://discord.com/api/download?platform=linux&format=deb
