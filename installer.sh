@@ -131,14 +131,14 @@ read discordInstall
 if [[ "$discordInstall" == "" || "$discordInstall" == "y" || "$discordInstall" == "Y" ]]; then
     if [[ "$packageManager" == "pacman" ]]; then
         packageInstall discord
-    elif [[ "$packageManager" == "apt" ]]; then
-        if ! packageInstall discord; then
-            wget -O ~/Downloads/discord.deb https://discord.com/api/download?platform=linux&format=deb
-            sudo apt install ~/Downloads/discord.deb
-        fi
+    #elif [[ "$packageManager" == "apt" ]]; then   !!!This fails on Debian 13, and has been tested in the past and did work on Debian Based distros.!!!
+        #if ! packageInstall discord; then         !!! This could be patched later down the line, but at the moment, to resolve the issue, we'll keep using flatpak.!!!
+            #wget -O ~/Downloads/discord.deb https://discord.com/api/download?platform=linux&format=deb
+            #sudo apt install ~/Downloads/discord.deb
+        #fi
     else
         # Flatpak is starting to feel like cheating. I should find other methods rather than using it as a copout. 
-        flatpak install flathub com.discordapp.Discord
+        sudo flatpak install flathub com.discordapp.Discord
     fi
 else
     echo "Not installing discord"
