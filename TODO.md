@@ -1,3 +1,7 @@
+# In the works
+This is what is currently being worked
+- Currently rebuilding the script to use a main function, and not have everything run in the global scope
+
 # General
 - Add more packages and apps
 - Research using a modified Discord client
