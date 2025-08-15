@@ -223,7 +223,7 @@ installConfigs () {
 
 summary () {
     # too barebones and needs updating. more will be added to the summary with time
-    printf "\n\n\n\n\nSummary\nDesktop Environment - ${deskEnv}\nTerminal Emmulator - ${termEmm}\nBrowser - ${chosenBrowser}\nDiscord - ${chosenDiscord}"
+    printf "\n\n\n\n\nSummary\nDesktop Environment - ${deskEnv}\nTerminal Emmulator - ${termEmm}\nBrowser - ${chosenBrowser}\nDiscord - ${chosenDiscord}\n"
 
     # prompt reboot
     while true; do
@@ -267,8 +267,8 @@ EOF
     packageFlatpak
     # flatpak (if user wants to use it)
     if [[ "$doFlatpak" == "true" ]]; then
-        packageInstall flatpak
-        flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+        packageInstallPrefix flatpak
+        sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
     fi
 
     # fastfetch
