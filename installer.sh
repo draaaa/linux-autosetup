@@ -82,10 +82,10 @@ packageFlatpak () {
         printf "do you wanna use flatpak? without using flatpak, some of the features may not be supported for your particular distro [y/n] "
         read -r userFlatpak
         if [[ "${userFlatpak,,}" == "y" ]]; then
-            useFlatpak=true
+            doFlatpak=true
             break
         elif [[ "${userFlatpak,,}" == "n" ]]; then
-            useFlatpak=false
+            doFlatpak=false
             break
         else
             printf "please use a valid input\n"
@@ -96,11 +96,11 @@ packageFlatpak () {
 
 browserInstall () {
     # need to add non-flatpak method and implement it into the list
-    if [[ "$useFlatpak" == "false" ]]; then
+    if [[ "$doFlatpak" == "false" ]]; then
         printf "if you want to install a browser, please use flatpak\nat the moment, the only method implemented to install a browser is with flatpak\nthis is currently in the works, please be patient!\n"
         return 0
     
-    elif [[ "$useFlatpak" == "true" ]]; then
+    elif [[ "$doFlatpak" == "true" ]]; then
         printf "\n\n\n\n\n\n\n\n\n\n"
         while true; do
             printf "\nWhat browser do you want to install? [N/1/2/3]\n[N] - None\n[1] - Firefox\n[2] - LibreWolf\n[3] - Zen\n[4] - Brave\n[5] - Chrome\n "
@@ -156,10 +156,10 @@ browserInstall () {
 }
 
 discordInstall () {
-    if [[ "$useFlatpak" == "false" ]]; then
+    if [[ "$doFlatpak" == "false" ]]; then
         printf "if you want to install a browser, please use flatpak\nat the moment, the only method implemented to install a browser is with flatpak\nthis is currently in the works, please be patient!\n"
         return 0
-    elif [[ "$useFlatpak" == "true" ]]; then
+    elif [[ "$doFlatpak" == "true" ]]; then
         printf "Do you want to install Discord? [Y/n] "
         read -r discordInstall
         if [[ "$discordInstall" == "" || "${discordInstall,,}" == "y" ]]; then
@@ -187,6 +187,7 @@ discordInstall () {
             echo "Not installing discord"
             chosenDiscord="Not installed"
         fi
+    fi
 }
 
 
@@ -261,7 +262,14 @@ EOF
     detectDistro  # returns packageManager
     detectDeskEnv  # returns deskEnv
     
-    packageInstallPrefix wget git zsh cowsay ufw flatpak
+    packageInstallPrefix wget git zsh cowsay ufw
+    
+    # flatpak (if user wants to use it)
+    if [[ "$doFlatpak" == "true"]]; then
+        packageInstall flatpak
+        flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    fi
+    
     # fastfetch
     if [[ "$packageManager" == "apt" ]]; then
         if ! packageInstallPrefix fastfetch; then
@@ -286,6 +294,7 @@ EOF
     mkdir ~/.zinit
     git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
 
+    packageFlatpak
     browserInstall
     discordInstall
     installConfigs 
