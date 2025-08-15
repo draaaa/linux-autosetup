@@ -264,12 +264,13 @@ EOF
     
     packageInstallPrefix wget git zsh cowsay ufw
     
+    packageFlatpak
     # flatpak (if user wants to use it)
-    if [[ "$doFlatpak" == "true"]]; then
+    if [[ "$doFlatpak" == "true" ]]; then
         packageInstall flatpak
         flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     fi
-    
+
     # fastfetch
     if [[ "$packageManager" == "apt" ]]; then
         if ! packageInstallPrefix fastfetch; then
@@ -294,7 +295,6 @@ EOF
     mkdir ~/.zinit
     git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
 
-    packageFlatpak
     browserInstall
     discordInstall
     installConfigs 
