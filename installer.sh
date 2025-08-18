@@ -96,11 +96,11 @@ packageFlatpak () {
 
 browserInstall () {
     # need to add non-flatpak method and implement it into the list
-    if [[ "$doFlatpak" == "false" ]]; then
-        printf "if you want to install a browser, please use flatpak\nat the moment, the only method implemented to install a browser is with flatpak\nthis is currently in the works, please be patient!\n"
-        return 0
+    #if [[ "$doFlatpak" == "false" ]]; then
+    #    printf "if you want to install a browser, please use flatpak\nat the moment, the only method implemented to install a browser is with flatpak\nthis is currently in the works, please be patient!\n"
+    #    return 0
     
-    elif [[ "$doFlatpak" == "true" ]]; then
+    #elif [[ "$doFlatpak" == "true" ]]; then
         printf "\n\n\n\n\n\n\n\n\n\n"
         while true; do
             printf "\nWhat browser do you want to install? [N/1/2/3]\n[N] - None\n[1] - Firefox\n[2] - LibreWolf\n[3] - Zen\n[4] - Brave\n[5] - Chrome\n "
@@ -109,22 +109,86 @@ browserInstall () {
                 printf "No browser chosen\n"
                 chosenBrowser="No browser installed"
                 break
+
             elif [[ "$userBrowser" == "1" ]]; then
-                packageInstallPrefix firefox
+                if [[ "$doFlatpak" == "false" ]]; then
+                    packageInstallPrefix firefox
+                elif [[ "$doFlatpak" == "true" ]]; then
+                    flatpak install flathub org.mozilla.firefox
+                fi
                 chosenBrowser="Firefox"
                 break
+
             elif [[ "$userBrowser" == "2" ]]; then
-                sudo flatpak install flathub io.gitlab.librewolf-community
+                if [[ "$doFlatpak" == "false" ]]; then
+                    if ! packageInstallPrefix LibreWolf; then
+                        if [[ "$packageManager" == "pacman" ]]; then
+                            git clone https://aur.archlinux.org/librewolf-bin.git
+                            cd librewolf-bin
+                            makepkg -si
+                        elif [[ "$packageManager" == "apt" ]]; then
+                            sudo apt update && sudo apt install extrepo -y
+                            sudo extrepo enable librewolf
+                            sudo apt update && sudo apt install librewolf -y
+                        elif [[ "$packageManager" == "dnf" ]]; then
+                            curl -fsSL https://repo.librewolf.net/librewolf.repo | pkexec tee /etc/yum.repos.d/librewolf.repo
+                            sudo dnf install librewolf
+                            rpm-ostree install librewolf
+                        else
+                            printf "your distro may not have support from LibreWolf officially, but there are still other methods\nthese are soon to be implemented\nif you still want to install LibreWolf, i recommend using flatpak for now\n"
+                        fi
+                    fi
+                elif [[ "$doFlatpak" == "true" ]]; then
+                    sudo flatpak install flathub io.gitlab.librewolf-community
+                fi
                 chosenBrowser="LibreWolf"
                 break
+
             elif [[ "$userBrowser" == "3" ]]; then
-                sudo flatpak install flathub app.zen_browser.zen
+                if [[ "$doFlatpak" == "false" ]]; then
+                    cd ~/Downloads
+                    wget -O zen.linux-x86_64.tar.xz https://github.com/zen-browser/desktop/releases/download/1.14.11b/zen.linux-x86_64.tar.xz
+                    sudo tar -xf zen.linux-x86_64.tar.xz -C /opt/
+                    sudo rm -rf zen.linux-x86_64.tar.xz
+                    cd
+                    sudo chmod +x /opt/zen/zen
+                    sudo ln -sf /opt/zen/zen /usr/local/bin/zen
+                    sudo tee /usr/share/applications/zen.desktop >/dev/null << 'EOF'
+[Desktop Entry]
+Name=Zen Browser
+Exec=/opt/zen/zen %u
+Icon=/opt/zen/browser/chrome/icons/default/default128.png
+Type=Application
+Categories=Network;WebBrowser;
+EOF
+                elif [[ "$doFlatpak" == "true" ]]; then
+                    sudo flatpak install flathub app.zen_browser.zen
+                fi
                 chosenBrowser="Zen"
                 break
+
             elif [[ "$userBrowser" == "4" ]]; then
-                sudo flatpak install flathub com.brave.Browser
+                if [[ "$doFlatpak" == "false" ]]; then
+                    if [[ "$packageManager" == "pacman" ]]; then
+                        yay -Sy brave-bin
+                    elif [[ "$packageManager" == "apt" ]]; then
+                        sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+                        sudo curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources https://brave-browser-apt-release.s3.brave.com/brave-browser.sources
+                        sudo apt update
+                        sudo apt install brave-browser
+                    elif [[ "$packageManager" == "dnf"]]
+                        sudo dnf install dnf-plugins-core
+                        sudo dnf config-manager addrepo --from-repofile=https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+                        sudo dnf install brave-browser
+                    else
+                        curl -fsS https://dl.brave.com/install.sh | sh
+                    fi
+                elif [[ "$doFlatpak" == "true" ]]; then
+                    sudo flatpak install flathub com.brave.Browser
+                fi
                 chosenBrowser="Brave"
                 break
+
             elif [[ "$userBrowser" == "5" ]]; then
                 printf "Are you sure? [y/N] "
                 read -r confirm1
@@ -132,15 +196,20 @@ browserInstall () {
                     printf "Are you ABSOLUTELY CERTAIN that you want to use Google Chrome on linux, and not some other option? [y/N] "
                     read -r confirm2
                     if [[ "${confirm2,,}" == "y" ]]; then
-                        printf "Last time, I promise. I just wanna make sure you're not doing this by mistake. [y/N] "
-                        read -r confirm3
-                        if [[ "${confirm3,,}" == "y" ]]; then
+                        if [[ "$doFlatpak" == "false" ]]; then
+                            if ! packageInstallPrefix chromium; then
+                                if [[ "$packageManager" == "apt" ]]; then
+                                    wget -O ~/Downloads/chromium.deb http://security.debian.org/debian-security/pool/updates/main/c/chromium/chromium_139.0.7258.127-1~deb13u1_amd64.deb
+                                    sudo apt install ~/Downloads/chromium.deb
+                                # need to add more backup methods
+                                else
+                                    printf "your distro may not have support for chromium officially, but there are still other methods\nthese are soon to be implemented\nif you still want to install chromium, i recommend using flatpak for now\n"
+
+                        elif [[ "$doFlatpak" == "true" ]]; then
                             sudo flatpak install flathub com.google.Chrome
-                            chosenBrowser="Google Chrome"
-                            break
-                        else
-                            continue
                         fi
+                        chosenBrowser="Chromium"
+                        break
                     else
                         continue
                     fi
@@ -148,7 +217,7 @@ browserInstall () {
                     continue
                 fi
             else
-                printf "Invalid option - please use the numbers or 'N' to not install a browser\n"
+                printf "invalid option - please use the numbers or 'N' to not install a browser\n"
                 continue
             fi
         done
@@ -157,7 +226,7 @@ browserInstall () {
 
 discordInstall () {
     if [[ "$doFlatpak" == "false" ]]; then
-        printf "if you want to install a browser, please use flatpak\nat the moment, the only method implemented to install a browser is with flatpak\nthis is currently in the works, please be patient!\n"
+        printf "if you want to install discord, please use flatpak\nat the moment, the only method implemented to install a browser is with flatpak\nthis is currently in the works, please be patient!\n"
         return 0
     elif [[ "$doFlatpak" == "true" ]]; then
         printf "Do you want to install Discord? [Y/n] "
@@ -258,11 +327,17 @@ EOF
         printf "Make yourself a sudoer in the root user with 'usermod -aG sudo user'\n"
         return 1
     fi
-
+    
     detectDistro  # returns packageManager
     detectDeskEnv  # returns deskEnv
     
-    packageInstallPrefix wget git zsh cowsay ufw
+    packageInstallPrefix wget curl git zsh cowsay ufw
+    if [[ "$packageManager" == "pacman" ]]; then
+        sudo pacman -S --needed --noconfirm base-devel
+        git clone https://aur.archlinux.org/yay.git
+        cd yay
+        makepkg -si
+    fi
     
     packageFlatpak
     # flatpak (if user wants to use it)
