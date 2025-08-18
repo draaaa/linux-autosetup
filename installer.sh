@@ -149,18 +149,23 @@ browserInstall () {
                     cd ~/Downloads
                     wget -O zen.linux-x86_64.tar.xz https://github.com/zen-browser/desktop/releases/download/1.14.11b/zen.linux-x86_64.tar.xz
                     sudo tar -xf zen.linux-x86_64.tar.xz -C /opt/
-                    sudo rm -rf zen.linux-x86_64.tar.xz
-                    cd
                     sudo chmod +x /opt/zen/zen
                     sudo ln -sf /opt/zen/zen /usr/local/bin/zen
                     sudo tee /usr/share/applications/zen.desktop >/dev/null << 'EOF'
 [Desktop Entry]
 Name=Zen Browser
-Exec=/opt/zen/zen %u
-Icon=/opt/zen/browser/chrome/icons/default/default128.png
+GenericName=Web Browser
+Comment=Zen Browser - Fast and Private Web Browser
+Exec=/opt/zen/zen %U
+Terminal=false
 Type=Application
 Categories=Network;WebBrowser;
+Icon=/opt/zen/browser/chrome/icons/default/default128.png
+StartupWMClass=zen
 EOF
+                    sudo chmod 644 /usr/share/applications/zen.desktop
+                    sudo rm -f zen.linux-x86_64.tar.xz
+                    cd
                 elif [[ "$doFlatpak" == "true" ]]; then
                     sudo flatpak install flathub app.zen_browser.zen
                 fi
@@ -225,25 +230,35 @@ EOF
 }
 
 discordInstall () {
-    if [[ "$doFlatpak" == "false" ]]; then
-        printf "if you want to install discord, please use flatpak\nat the moment, the only method implemented to install a browser is with flatpak\nthis is currently in the works, please be patient!\n"
-        return 0
-    elif [[ "$doFlatpak" == "true" ]]; then
         printf "Do you want to install Discord? [Y/n] "
         read -r discordInstall
         if [[ "$discordInstall" == "" || "${discordInstall,,}" == "y" ]]; then
-            if [[ "$packageManager" == "pacman" ]]; then
-                if packageInstallPrefix discord; then
-                    chosenDiscord="Successfully installed"
-                else
-                    chosenDiscord="Failed to install"
-                fi
-            #elif [[ "$packageManager" == "apt" ]]; then   !!!This fails on Debian 13, and has been tested in the past and did work on Debian Based distros.!!!
-                #if ! packageInstall discord; then         !!! This could be patched later down the line, but at the moment, to resolve the issue, we'll keep using flatpak.!!!
-                    #wget -O ~/Downloads/discord.deb https://discord.com/api/download?platform=linux&format=deb
-                    #sudo apt install ~/Downloads/discord.deb
-                #fi
-            else
+            if [[ "$doFlatpak" == "false" ]]; then
+                if ! packageInstallPrefix discord; then
+                    if [[ "$packageManager" == "apt" ]]; then
+
+                    else
+                        cd ~/Downloads
+                        wget -O discord.tar.gz 'https://discord.com/api/download?platform=linux&format=tar.gz'
+                        sudo tar -xzf discord.tar.gz -C /opt/
+                        sudo chmod +x /opt/Discord/Discord
+                        sudo ln -sf /opt/Discord/Discord /usr/local/bin/discord
+                        sudo tee /usr/share/applications/discord.desktop >/dev/null << 'EOF'
+[Desktop Entry]
+Name=Discord
+GenericName=Internet Messenger
+Comment=Discord - Chat for Communities and Friends
+Exec=/opt/Discord/Discord %U
+Terminal=false
+Type=Application
+Categories=Network;InstantMessaging;
+Icon=/opt/Discord/discord.png
+StartupWMClass=discord
+EOF
+                        sudo chmod 644 /usr/share/applications/discord.desktop
+                        rm -f discord.tar.gz
+                        cd
+            elif [[ "$doFlatpak" == "true" ]]; then
                 # Flatpak is starting to feel like cheating. I should find other methods rather than using it as a copout. 
                 if sudo flatpak install flathub com.discordapp.Discord; then
                     chosenDiscord="Successfully installed"
@@ -256,7 +271,6 @@ discordInstall () {
             echo "Not installing discord"
             chosenDiscord="Not installed"
         fi
-    fi
 }
 
 
