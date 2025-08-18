@@ -1,6 +1,7 @@
 # In the works
 This is what is currently being worked
-- Currently rebuilding the script to use a main function, and not have everything run in the global scope
+- Adding more methods for installing
+- Planning the workflow of the script (how the user interacts with it)
 
 # General
 - Add more packages and apps
