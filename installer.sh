@@ -7,21 +7,6 @@ trap 'rc=$?; printf "Error @ %s:%s (exit %s)\n" "${BASH_SOURCE[0]}" "${LINENO}" 
 
 detectDistro () {
     source /etc/os-release
-    while true; do
-        printf "update system? [Y/n] "
-        read -r userUpdate
-        if [[ "$userUpdate" == "" || "${userUpdate,,}" == "y" ]]; then
-            doUpdate=true
-            break
-        elif [[ "${userUpdate,,}" == "n" ]]; then
-            doUpdate=false
-            break
-        else
-            printf "please use a valid input\n"
-            continue
-        fi
-    done
-    shopt -s nocasematch
     if [[ "$ID" == *arch* || "${ID_LIKE:-}" == *arch* ]]; then
         packageManager="pacman"
         if [[ "$doUpdate" == "true" ]]; then
@@ -46,7 +31,6 @@ detectDistro () {
         printf "your distro was not detected\nthis is a necessary function of the script. please submit an issue that says your distro and that this error was encountered"
         return 1
     fi
-    shopt -u nocasematch
 }
 
 detectDeskEnv () {
@@ -77,34 +61,9 @@ packageInstallPrefix () {
     esac
 }
 
-packageFlatpak () {
-    while true; do
-        printf "do you wanna use flatpak? without using flatpak, some of the features may not be supported for your particular distro [y/n] "
-        read -r userFlatpak
-        if [[ "${userFlatpak,,}" == "y" ]]; then
-            doFlatpak=true
-            break
-        elif [[ "${userFlatpak,,}" == "n" ]]; then
-            doFlatpak=false
-            break
-        else
-            printf "please use a valid input\n"
-            continue
-        fi
-    done
-}
 
 browserInstall () {
-    printf "\n\n\n\n\n\n\n\n\n\n"
-    while true; do
-        printf "\nWhat browser do you want to install? [N/1/2/3]\n[N] - None\n[1] - Firefox\n[2] - LibreWolf\n[3] - Zen\n[4] - Brave\n[5] - Chrome\n "
-        read -r userBrowser
-        if [[ "$userBrowser" == "" || "${userBrowser,,}" == "n" ]]; then  
-            printf "No browser chosen\n"
-            chosenBrowser="No browser installed"
-            break
-
-        elif [[ "$userBrowser" == "1" ]]; then
+        if [[ "${BROWSER,,}" == "firefox" ]]; then
             if [[ "$doFlatpak" == "false" ]]; then
                 packageInstallPrefix firefox
             elif [[ "$doFlatpak" == "true" ]]; then
@@ -113,7 +72,7 @@ browserInstall () {
             chosenBrowser="Firefox"
             break
 
-        elif [[ "$userBrowser" == "2" ]]; then
+        elif [[ "${BROWSER,,}" == "librewolf" ]]; then
             if [[ "$doFlatpak" == "false" ]]; then
                 if ! packageInstallPrefix LibreWolf; then
                     if [[ "$packageManager" == "pacman" ]]; then
@@ -137,7 +96,7 @@ browserInstall () {
             chosenBrowser="LibreWolf"
             break
 
-        elif [[ "$userBrowser" == "3" ]]; then
+        elif [[ "${BROWSER,,}" == "zen" ]]; then
             if [[ "$doFlatpak" == "false" ]]; then
                 cd ~/Downloads
                 wget -O zen.linux-x86_64.tar.xz https://github.com/zen-browser/desktop/releases/download/1.14.11b/zen.linux-x86_64.tar.xz
@@ -165,7 +124,7 @@ EOF
             chosenBrowser="Zen"
             break
 
-        elif [[ "$userBrowser" == "4" ]]; then
+        elif [[ "${BROWSER,,}" == "brave" ]]; then
             if [[ "$doFlatpak" == "false" ]]; then
                 if [[ "$packageManager" == "pacman" ]]; then
                     yay -Sy brave-bin
@@ -188,13 +147,13 @@ EOF
             chosenBrowser="Brave"
             break
 
-        elif [[ "$userBrowser" == "5" ]]; then
-            printf "Are you sure? [y/N] "
-            read -r confirm1
-            if [[ "${confirm1,,}" == "y" ]]; then
-                printf "Are you ABSOLUTELY CERTAIN that you want to use Google Chrome on linux, and not some other option? [y/N] "
-                read -r confirm2
-                if [[ "${confirm2,,}" == "y" ]]; then
+        elif [[ "${BROWSER,,}" == "chrome" ]]; then
+            #printf "Are you sure? [y/N] "
+            #read -r confirm1
+            #if [[ "${confirm1,,}" == "y" ]]; then
+                #printf "Are you ABSOLUTELY CERTAIN that you want to use Google Chrome on linux, and not some other option? [y/N] "
+               # read -r confirm2
+                #if [[ "${confirm2,,}" == "y" ]]; then
                     if [[ "$doFlatpak" == "false" ]]; then
                         if ! packageInstallPrefix chromium; then
                             if [[ "$packageManager" == "apt" ]]; then
@@ -210,23 +169,15 @@ EOF
                     fi
                     chosenBrowser="Chromium"
                     break
-                else
-                    continue
                 fi
-            else
-                continue
             fi
         else
             printf "invalid option - please use the numbers or 'N' to not install a browser\n"
-            continue
         fi
-    done
 }
 
 discordInstall () {
-        printf "Do you want to install Discord? [Y/n] "
-        read -r discordInstall
-        if [[ "$discordInstall" == "" || "${discordInstall,,}" == "y" ]]; then
+        if [[ "$discordInstall" == "true" ]]; then
             if [[ "$doFlatpak" == "false" ]]; then
                 if ! packageInstallPrefix discord; then
                     if [[ "$packageManager" == "apt" ]]; then
@@ -313,44 +264,84 @@ installConfigs () {
 }
 
 
-summary () {
+#summary () {
     # too barebones and needs updating. more will be added to the summary with time
-    printf "\n\n\n\n\nSummary\nDesktop Environment - ${deskEnv}\nTerminal Emmulator - ${termEmm}\nBrowser - ${chosenBrowser}\nDiscord - ${chosenDiscord}\n"
+#    printf "\n\n\n\n\nSummary\nDesktop Environment - ${deskEnv}\nTerminal Emmulator - ${termEmm}\nBrowser - ${chosenBrowser}\nDiscord - ${chosenDiscord}\n"
 
     # prompt reboot
-    while true; do
-        printf "Reboot is recommended. Want to reboot? [Y/n] " 
-        read -r userReboot
-        if [[ "$userReboot" == "" || "${userReboot,,}" == "y" ]]; then
-            doReboot=true
-        elif [[ "${userReboot,,}" == "n" ]]; then
-            doReboot=false
-            printf "i recommend manually rebooting soon, especially since alot of things have just been downloaded and installed\nif something breaks before you reboot because you ignored the recommendation, thats on you\n"
-        else
-            printf "please use a valid input\n"
-            continue
-        fi
-        break
-    done
-}
+#    while true; do
+#        printf "Reboot is recommended. Want to reboot? [Y/n] " 
+#        read -r userReboot
+#        if [[ "$userReboot" == "" || "${userReboot,,}" == "y" ]]; then
+#            doReboot=true
+#        elif [[ "${userReboot,,}" == "n" ]]; then
+#            doReboot=false
+#            printf "i recommend manually rebooting soon, especially since alot of things have just been downloaded and installed\nif something breaks before you reboot because you ignored the recommendation, thats on you\n"
+#        else
+#            printf "please use a valid input\n"
+#            continue
+#        fi
+#        break
+#    done
+#}
 
 main () {
-    cat << EOF
-    ___                                    __                  __            
-       / (_)___  __  ___  __      ____ ___  __/ /_____  ________  / /___  ______ 
-      / / / __ \/ / / / |/_/_____/ __ \`/ / / / __/ __ \/ ___/ _ \/ __/ / / / __ \\
-     / / / / / / /_/ />  </_____/ /_/ / /_/ / /_/ /_/ (__  )  __/ /_/ /_/ / /_/ /
-    /_/_/_/ /_/\__,_/_/|_|      \__,_/\__,_/\__/\____/____/\___/\__/\__,_/ .___/ 
-                                                                        /_/      
-EOF
-    printf "made by draaaa :3\npls remember to submit an issue to the github if there are problems\n\n"
-
-    printf "Have you made your user a sudoer? [Y/n] "
-    read -r isSudoer
-    if [[ "$isSudoer" != "" && "${isSudoer,,}" != "y" ]]; then
-        printf "Make yourself a sudoer in the root user with 'usermod -aG sudo user'\n"
+    if whiptail --title "linux-autosetup" --yesno \
+        "Are you a sudoer?" 10 50; then
+            :
+    else
+        whiptail --title "linux-autosetup" --msgbox \
+        "Make yourself a sudoer in the root user with\n\n'usermod -aG sudo user'\n\nPress 'enter' to close" \
+        12 75
         exit 1
     fi
+
+    APPS=$(whiptail --title "linux-autosetup" --checklist \
+    "Choose apps to install" 20 75 10 \
+    "Browser" "Install a browser from a list of options" OFF \
+    "Discord" "Install Discord" OFF \
+    3>&1 1>&2 2>&3)
+    APPS=$(echo "$APPS" | tr -d '"')
+
+    if [[ "$APPS" == *Browser* ]]; then
+        BROWSER=$(whiptail --title "linux-autosetup" --menu \
+        "Choose a browser to install" 20 75 10 \
+        "Firefox" "Install Firefox" \
+        "LibreWolf" "Install LibreWolf" \
+        "Zen" "Install Zen" \
+        "Brave" "Install Brave" \
+        "Chrome" "Install Chrome" \
+        3>&1 1>&2 2>&3)
+        BROWSER=$(echo "$BROWSER" | tr -d '"')
+    fi
+
+    UTILS=$(whiptail --title "linux-autosetup" --checklist \
+    "Choose utilities to install" 20 75 10 \
+    "zsh" "Download and install zsh as the default shell" \
+    "Fastfetch" "Download and install Fastfetch" \
+    "UFW" "Download, install, and enable Uncomplicated Fire Wall" \
+    "Mullvad VPN" "Download and install Mullvad VPN" \
+    3>&1 1>&2 2>&3)
+    UTILS=$(echo "$UTILS" | tr -d '"')
+
+    if whiptail --title "linux-autosetup" --yesno \
+        "The system should update before being ran\n\nUpdate?" 10 75; then
+            doUpdate=true
+    else
+        doUpdate=false
+    fi
+
+    if [[ "${APPS,,}" == *discord* || -n "${BROWSER:-}" ]]; then
+        if whiptail --title "linux-autosetup" --yesno \
+            "You have selected to install apps where flatpak can be used\n\nDo you want to use flatpak?\n\nOptions will be listed soon" 10 75; then
+                doFlatpak=true
+        else
+            doFlatpak=false
+        fi
+    fi
+
+    if [[ "${APPS,,}" == *discord* ]]; then
+        discordInstall=true
     
     detectDistro  # returns packageManager
     detectDeskEnv  # returns deskEnv
@@ -363,7 +354,7 @@ EOF
         makepkg -si
     fi
     
-    packageFlatpak
+    
     # flatpak (if user wants to use it)
     if [[ "$doFlatpak" == "true" ]]; then
         packageInstallPrefix flatpak
@@ -400,9 +391,15 @@ EOF
     browserInstall
     discordInstall
     installConfigs 
-    summary
-    if [[ "$doReboot" == "true" ]]; then
-        sudo reboot
+    #summary
+    if whiptail --title "linux-autosetup" --yesno \
+        "The system must be rebooted to apply some of the features\n\nReboot?" 10 50; then
+            sudo reboot now
+    else
+        whiptail --title "linux-autosetup" --msgbox \
+        "Make sure that you reboot at some point to ensure stability of your system" \
+        10 75
+        exit 0
     fi
 }
 
