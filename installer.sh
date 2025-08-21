@@ -72,7 +72,7 @@ packageInstallPrefix () {
             sudo xbps-install -y "$@" ;;
         *)
             printf "your package manager was not detected\nthis is a necessary function of the script. please submit an issue that says your distro and that this error was encountered"
-            exit 1
+            return 1
             ;;
     esac
 }
@@ -274,7 +274,19 @@ EOF
 installConfigs () {
     # for consistency, use links like this - https://raw.githubusercontent.com/draaaa/linux-autosetup/main/file
     # next feature to be added would be using links to custom configs rather than my own preset configs
-    
+    while true; do
+        printf "want to install my personal dot files? [y/n] "
+        read -r doDotFiles
+        if [[ "${doDotFiles,,}" == "y" ]]; then
+            :
+        elif [[ "${doDotFiles,,}" == "n" ]]; then
+            return 0
+        else
+            printf "please enter a valid input\n"
+            continue
+        fi
+        break
+    done
     # konsole
     if [[ -n "$KONSOLE_VERSION" ]]; then
         wget -O ~/.local/share/konsole/Brogrammer.colorscheme https://raw.githubusercontent.com/draaaa/linux-autosetup/main/terminal-profiles/Brogrammer.colorscheme
@@ -337,7 +349,7 @@ EOF
     read -r isSudoer
     if [[ "$isSudoer" != "" && "${isSudoer,,}" != "y" ]]; then
         printf "Make yourself a sudoer in the root user with 'usermod -aG sudo user'\n"
-        return 1
+        exit 1
     fi
     
     detectDistro  # returns packageManager
@@ -384,6 +396,7 @@ EOF
 
     sudo mkdir -p /opt
 
+    
     browserInstall
     discordInstall
     installConfigs 
