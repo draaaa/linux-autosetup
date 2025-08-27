@@ -2,6 +2,8 @@
 This is what is currently being worked
 - Adding more methods for installing
 - Planning the workflow of the script (how the user interacts with it)
+- Refining the user interaction
+- Must test on distros before next official release
 
 # General
 - Add more packages and apps
