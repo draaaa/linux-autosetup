@@ -1,7 +1,8 @@
 # **IMPORTANT**
-The script may be unstable at the moment. Currently I'm working to change the front end environment. Rather than using 'printf' and 'read -r' throughout the execution, whiptail is being added. The script is incomplete and will likely encounter some error in it's current state. For stability, it's recommended that you use the latest release version rather than the most up to date file in the repository. 
-I'm also currently switching distros with the beginning of school. Development will kick off again soon.
-Test! Hello, world!
+Two things.
+- The script is likely unstable at the moment. If you wish to use the most recent stable version of the script, please check the releases. 
+- Fall semester has started, and it will undoubtedly slow down progress on the project. I have no intentions of discontinuing linux-autosetup, however, as you already know, school is the number one priority. I will work on this project when I can find the time. I cannot currently come up with a fixed development schedule. 
+
 
 # What is linux-autosetup?
 linux-autosetup is a shell script that targets the pesky process of reinstalling a distro and needing to reinstall and reconfigure everything. Forget to back up your OS and need to reinstall? Trying a new OS entirely out of curiousity? linux-autosetup is built specifically for this. It automatically downloads and installs packages that people use daily. It automatically detects your distro and works with little input from the user. For the most part, input will be choosing what you'd want to install, like choosing from a list of browsers and whether or not to install non-essential, less used packages. 
