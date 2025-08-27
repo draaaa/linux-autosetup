@@ -168,9 +168,6 @@ EOF
                         sudo flatpak install flathub com.google.Chrome
                     fi
                     chosenBrowser="Chromium"
-                    break
-                fi
-            fi
         else
             printf "invalid option - please use the numbers or 'N' to not install a browser\n"
         fi
@@ -225,19 +222,11 @@ EOF
 installConfigs () {
     # for consistency, use links like this - https://raw.githubusercontent.com/draaaa/linux-autosetup/main/file
     # next feature to be added would be using links to custom configs rather than my own preset configs
-    while true; do
-        printf "want to install my personal dot files? [y/n] "
-        read -r doDotFiles
-        if [[ "${doDotFiles,,}" == "y" ]]; then
-            :
-        elif [[ "${doDotFiles,,}" == "n" ]]; then
-            return 0
-        else
-            printf "please enter a valid input\n"
-            continue
-        fi
-        break
-    done
+    if [[ "$doFlatPak" == "false" ]]; then
+        printf "not installing dot files"
+        return 0
+    fi
+
     # konsole
     if [[ -n "$KONSOLE_VERSION" ]]; then
         wget -O ~/.local/share/konsole/Brogrammer.colorscheme https://raw.githubusercontent.com/draaaa/linux-autosetup/main/terminal-profiles/Brogrammer.colorscheme
@@ -263,27 +252,6 @@ installConfigs () {
     sudo ufw enable
 }
 
-
-#summary () {
-    # too barebones and needs updating. more will be added to the summary with time
-#    printf "\n\n\n\n\nSummary\nDesktop Environment - ${deskEnv}\nTerminal Emmulator - ${termEmm}\nBrowser - ${chosenBrowser}\nDiscord - ${chosenDiscord}\n"
-
-    # prompt reboot
-#    while true; do
-#        printf "Reboot is recommended. Want to reboot? [Y/n] " 
-#        read -r userReboot
-#        if [[ "$userReboot" == "" || "${userReboot,,}" == "y" ]]; then
-#            doReboot=true
-#        elif [[ "${userReboot,,}" == "n" ]]; then
-#            doReboot=false
-#            printf "i recommend manually rebooting soon, especially since alot of things have just been downloaded and installed\nif something breaks before you reboot because you ignored the recommendation, thats on you\n"
-#        else
-#            printf "please use a valid input\n"
-#            continue
-#        fi
-#        break
-#    done
-#}
 
 main () {
     if whiptail --title "linux-autosetup" --yesno \
@@ -342,6 +310,14 @@ main () {
 
     if [[ "${APPS,,}" == *discord* ]]; then
         discordInstall=true
+    fi
+
+    if whiptail --title "linux-autosetup" --yesno \
+        "Do you want to install my personal dot files?\n\nThis includes zsh config, fastfetch config, and konsole profile" 10 75; then
+            doDotFiles=true
+    else
+        doDotFiles=false
+    fi
     
     detectDistro  # returns packageManager
     detectDeskEnv  # returns deskEnv
@@ -391,7 +367,7 @@ main () {
     browserInstall
     discordInstall
     installConfigs 
-    #summary
+
     if whiptail --title "linux-autosetup" --yesno \
         "The system must be rebooted to apply some of the features\n\nReboot?" 10 50; then
             sudo reboot now
