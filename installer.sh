@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Currently, the main issue with testing on VMs is that set -e is automatically terminating any network error without a grace period
+# Essentially, if a single network error occurs, the script will abort and will not attempt to reconnect anything
+# That's probably the main issue that I need to fix next
+
 set -euo pipefail
 IFS=$'\n\t'
 trap 'rc=$?; printf "Error @ %s:%s (exit %s)\n" "${BASH_SOURCE[0]}" "${LINENO}" "$rc"; exit "$rc"' ERR
