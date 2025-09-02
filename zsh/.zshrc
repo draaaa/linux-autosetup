@@ -20,6 +20,7 @@ export PATH="$HOME/bin:$PATH"
 # aliases
   # independent aliases
     alias pipes="pipes.sh -R -r 0"
+    alias c="clear"
 
   # function aliases
     alias cmd="~/Scripts/CommandList.sh"
