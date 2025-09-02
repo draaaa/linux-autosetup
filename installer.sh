@@ -221,7 +221,7 @@ EOF
 installConfigs () {
     # for consistency, use links like this - https://raw.githubusercontent.com/draaaa/linux-autosetup/main/file
     # next feature to be added would be using links to custom configs rather than my own preset configs
-    if [[ "$doFlatPak" == "false" ]]; then
+    if [[ "$doFlatpak" == "false" ]]; then
         printf "not installing dot files"
         return 0
     fi
@@ -284,10 +284,10 @@ main () {
 
     UTILS=$(whiptail --title "linux-autosetup" --checklist \
     "Choose utilities to install" 20 75 10 \
-    "zsh" "Download and install zsh as the default shell" \
-    "Fastfetch" "Download and install Fastfetch" \
-    "UFW" "Download, install, and enable Uncomplicated Fire Wall" \
-    "Mullvad VPN" "Download and install Mullvad VPN" \
+    "zsh" "Download and install zsh as the default shell" OFF \
+    "Fastfetch" "Download and install Fastfetch" OFF \
+    "UFW" "Download, install, and enable Uncomplicated Fire Wall" OFF \
+    "Mullvad VPN" "Download and install Mullvad VPN" OFF \
     3>&1 1>&2 2>&3)
     UTILS=$(echo "$UTILS" | tr -d '"')
 
