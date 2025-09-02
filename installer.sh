@@ -70,7 +70,7 @@ browserInstall () {
             flatpak install flathub org.mozilla.firefox
         fi
         chosenBrowser="Firefox"
-        break
+        return 0
 
     elif [[ "${BROWSER,,}" == "librewolf" ]]; then
         if [[ "$doFlatpak" == "false" ]]; then
@@ -94,7 +94,7 @@ browserInstall () {
             sudo flatpak install flathub io.gitlab.librewolf-community
         fi
         chosenBrowser="LibreWolf"
-        break
+        return 0
 
     elif [[ "${BROWSER,,}" == "zen" ]]; then
         if [[ "$doFlatpak" == "false" ]]; then
@@ -122,7 +122,7 @@ EOF
             sudo flatpak install flathub app.zen_browser.zen
         fi
         chosenBrowser="Zen"
-        break
+        return 0
 
     elif [[ "${BROWSER,,}" == "brave" ]]; then
         if [[ "$doFlatpak" == "false" ]]; then
@@ -145,7 +145,7 @@ EOF
             sudo flatpak install flathub com.brave.Browser
         fi
         chosenBrowser="Brave"
-        break
+        return 0
 
     elif [[ "${BROWSER,,}" == "chrome" ]]; then
         #printf "Are you sure? [y/N] "
@@ -168,24 +168,23 @@ EOF
                     sudo flatpak install flathub com.google.Chrome
                 fi
                 chosenBrowser="Chromium"
-    else
-        printf "invalid option - please use the numbers or 'N' to not install a browser\n"
+                return 0
     fi
 }
 
 discordInstall () {
-    if [[ "$discordInstall" == "true" ]]; then
-        if [[ "$doFlatpak" == "false" ]]; then
-            if ! packageInstallPrefix discord; then
-                if [[ "$packageManager" == "apt" ]]; then
-
-                else
-                    cd ~/Downloads
-                    wget -O discord.tar.gz 'https://discord.com/api/download?platform=linux&format=tar.gz'
-                    sudo tar -xzf discord.tar.gz -C /opt/
-                    sudo chmod +x /opt/Discord/Discord
-                    sudo ln -sf /opt/Discord/Discord /usr/local/bin/discord
-                    sudo tee /usr/share/applications/discord.desktop >/dev/null << 'EOF'
+        if [[ "$discordInstall" == "true" ]]; then
+            if [[ "$doFlatpak" == "false" ]]; then
+                if ! packageInstallPrefix discord; then
+                    if [[ "$packageManager" == "apt" ]]; then
+                        :
+                    else
+                        cd ~/Downloads
+                        wget -O discord.tar.gz 'https://discord.com/api/download?platform=linux&format=tar.gz'
+                        sudo tar -xzf discord.tar.gz -C /opt/
+                        sudo chmod +x /opt/Discord/Discord
+                        sudo ln -sf /opt/Discord/Discord /usr/local/bin/discord
+                        sudo tee /usr/share/applications/discord.desktop >/dev/null << 'EOF'
 [Desktop Entry]
 Name=Discord
 GenericName=Internet Messenger
@@ -197,25 +196,25 @@ Categories=Network;InstantMessaging;
 Icon=/opt/Discord/discord.png
 StartupWMClass=discord
 EOF
-                    sudo chmod 644 /usr/share/applications/discord.desktop
-                    rm -f discord.tar.gz
-                    cd
+                        sudo chmod 644 /usr/share/applications/discord.desktop
+                        rm -f discord.tar.gz
+                        cd
+                    fi
                 fi
-            fi
-            chosenDiscord="Successfully installed"
-        elif [[ "$doFlatpak" == "true" ]]; then
-            # Flatpak is starting to feel like cheating. I should find other methods rather than using it as a copout. 
-            if sudo flatpak install flathub com.discordapp.Discord; then
                 chosenDiscord="Successfully installed"
-            else
-                chosenDiscord="Failed to install"
+            elif [[ "$doFlatpak" == "true" ]]; then
+                # Flatpak is starting to feel like cheating. I should find other methods rather than using it as a copout. 
+                if sudo flatpak install flathub com.discordapp.Discord; then
+                    chosenDiscord="Successfully installed"
+                else
+                    chosenDiscord="Failed to install"
+                fi
+            
             fi
-        
+        else
+            echo "Not installing discord"
+            chosenDiscord="Not installed"
         fi
-    else
-        echo "Not installing discord"
-        chosenDiscord="Not installed"
-    fi
 }
 
 
