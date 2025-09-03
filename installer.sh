@@ -6,7 +6,7 @@
 
 set -euo pipefail
 IFS=$'\n\t'
-trap 'rc=$?; printf "Error @ %s:%s (exit %s)\n" "${BASH_SOURCE[0]}" "${LINENO}" "$rc"; exit "$rc"' ERR
+trap 'rc=$?; printf "Error @ %s:%s (exit %s)\n\Please copy the contents of the error.log file and paste it in an issue, and then submit the issue to the repo!\nThe error.log file should be found in ~/Downloads\n" "${BASH_SOURCE[0]}" "${LINENO}" "$rc" >> error.log; exit "$rc"' ERR
 
 
 detectDistro () {
@@ -88,7 +88,7 @@ browserInstall () {
                     sudo extrepo enable librewolf
                     sudo apt update && sudo apt install librewolf -y
                 elif [[ "$packageManager" == "dnf" ]]; then
-                    curl -fsSL https://repo.librewolf.net/librewolf.repo | pkexec tee /etc/yum.repos.d/librewolf.repo
+                    curl --retry 5 --retry-delay 2 --max-time 15 -fsSL https://repo.librewolf.net/librewolf.repo | pkexec tee /etc/yum.repos.d/librewolf.repo
                     sudo dnf install librewolf
                 else
                     printf "your distro may not have support from LibreWolf officially, but there are still other methods\nthese are soon to be implemented\nif you still want to install LibreWolf, i recommend using flatpak for now\n"
@@ -103,7 +103,7 @@ browserInstall () {
     elif [[ "${BROWSER,,}" == "zen" ]]; then
         if [[ "$doFlatpak" == "false" ]]; then
             cd ~/Downloads
-            wget -O zen.linux-x86_64.tar.xz https://github.com/zen-browser/desktop/releases/download/1.14.11b/zen.linux-x86_64.tar.xz
+            wget -O --tries=5 --wait=2 --timeout=15 zen.linux-x86_64.tar.xz https://github.com/zen-browser/desktop/releases/download/1.14.11b/zen.linux-x86_64.tar.xz
             sudo tar -xf zen.linux-x86_64.tar.xz -C /opt/
             sudo chmod +x /opt/zen/zen
             sudo ln -sf /opt/zen/zen /usr/local/bin/zen
@@ -133,8 +133,8 @@ EOF
             if [[ "$packageManager" == "pacman" ]]; then
                 yay -Sy brave-bin
             elif [[ "$packageManager" == "apt" ]]; then
-                sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-                sudo curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources https://brave-browser-apt-release.s3.brave.com/brave-browser.sources
+                sudo curl --retry 5 --retry-delay 2 --max-time 15 -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+                sudo curl --retry 5 --retry-delay 2 --max-time 15 -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources https://brave-browser-apt-release.s3.brave.com/brave-browser.sources
                 sudo apt update
                 sudo apt install -y brave-browser
             elif [[ "$packageManager" == "dnf" ]]; then
@@ -143,7 +143,7 @@ EOF
                 sudo dnf install -y brave-browser
 
             else
-                curl -fsS https://dl.brave.com/install.sh | sh
+                curl --retry 5 --retry-delay 2 --max-time 15 -fsS https://dl.brave.com/install.sh | sh
             fi
         elif [[ "$doFlatpak" == "true" ]]; then
             sudo flatpak install flathub com.brave.Browser
@@ -161,7 +161,7 @@ EOF
                 if [[ "$doFlatpak" == "false" ]]; then
                     if ! packageInstallPrefix chromium; then
                         if [[ "$packageManager" == "apt" ]]; then
-                            wget -O ~/Downloads/chromium.deb http://security.debian.org/debian-security/pool/updates/main/c/chromium/chromium_139.0.7258.127-1~deb13u1_amd64.deb
+                            wget -O --tries=5 --wait=2 --timeout=15 ~/Downloads/chromium.deb http://security.debian.org/debian-security/pool/updates/main/c/chromium/chromium_139.0.7258.127-1~deb13u1_amd64.deb
                             sudo apt install ~/Downloads/chromium.deb
                         # need to add more backup methods
                         else
@@ -177,18 +177,18 @@ EOF
 }
 
 discordInstall () {
-        if [[ "$discordInstall" == "true" ]]; then
-            if [[ "$doFlatpak" == "false" ]]; then
-                if ! packageInstallPrefix discord; then
-                    if [[ "$packageManager" == "apt" ]]; then
-                        :
-                    else
-                        cd ~/Downloads
-                        wget -O discord.tar.gz 'https://discord.com/api/download?platform=linux&format=tar.gz'
-                        sudo tar -xzf discord.tar.gz -C /opt/
-                        sudo chmod +x /opt/Discord/Discord
-                        sudo ln -sf /opt/Discord/Discord /usr/local/bin/discord
-                        sudo tee /usr/share/applications/discord.desktop >/dev/null << 'EOF'
+    if [[ "$discordInstall" == "true" ]]; then
+        if [[ "$doFlatpak" == "false" ]]; then
+            if ! packageInstallPrefix discord; then
+                if [[ "$packageManager" == "apt" ]]; then
+                    :
+                else
+                    cd ~/Downloads
+                    wget -O --tries=5 --wait=2 --timeout=15 discord.tar.gz 'https://discord.com/api/download?platform=linux&format=tar.gz'
+                    sudo tar -xzf discord.tar.gz -C /opt/
+                    sudo chmod +x /opt/Discord/Discord
+                    sudo ln -sf /opt/Discord/Discord /usr/local/bin/discord
+                    sudo tee /usr/share/applications/discord.desktop >/dev/null << 'EOF'
 [Desktop Entry]
 Name=Discord
 GenericName=Internet Messenger
@@ -200,25 +200,25 @@ Categories=Network;InstantMessaging;
 Icon=/opt/Discord/discord.png
 StartupWMClass=discord
 EOF
-                        sudo chmod 644 /usr/share/applications/discord.desktop
-                        rm -f discord.tar.gz
-                        cd
-                    fi
+                    sudo chmod 644 /usr/share/applications/discord.desktop
+                    rm -f discord.tar.gz
+                    cd
                 fi
-                chosenDiscord="Successfully installed"
-            elif [[ "$doFlatpak" == "true" ]]; then
-                # Flatpak is starting to feel like cheating. I should find other methods rather than using it as a copout. 
-                if sudo flatpak install flathub com.discordapp.Discord; then
-                    chosenDiscord="Successfully installed"
-                else
-                    chosenDiscord="Failed to install"
-                fi
-            
             fi
-        else
-            echo "Not installing discord"
-            chosenDiscord="Not installed"
+            chosenDiscord="Successfully installed"
+        elif [[ "$doFlatpak" == "true" ]]; then
+            # Flatpak is starting to feel like cheating. I should find other methods rather than using it as a copout. 
+            if sudo flatpak install flathub com.discordapp.Discord; then
+                chosenDiscord="Successfully installed"
+            else
+                chosenDiscord="Failed to install"
+            fi
+        
         fi
+    else
+        echo "Not installing discord"
+        chosenDiscord="Not installed"
+    fi
 }
 
 
@@ -232,8 +232,8 @@ installConfigs () {
 
     # konsole
     if [[ -n "$KONSOLE_VERSION" ]]; then
-        wget -O ~/.local/share/konsole/Brogrammer.colorscheme https://raw.githubusercontent.com/draaaa/linux-autosetup/main/terminal-profiles/Brogrammer.colorscheme
-        wget -O ~/.local/share/konsole/las_profile.profile https://raw.githubusercontent.com/draaaa/linux-autosetup/main/terminal-profiles/konsole.profile
+        wget -O --tries=5 --wait=2 --timeout=15 ~/.local/share/konsole/Brogrammer.colorscheme https://raw.githubusercontent.com/draaaa/linux-autosetup/main/terminal-profiles/Brogrammer.colorscheme
+        wget -O --tries=5 --wait=2 --timeout=15 ~/.local/share/konsole/las_profile.profile https://raw.githubusercontent.com/draaaa/linux-autosetup/main/terminal-profiles/konsole.profile
         termEmm="konsole"
     else
         printf "Your terminal emmulator may not be supported yet.\nAt the moment, I mostly use konsole, so support for your terminal may not exist yet.\nPlease submit an issue requesting support for your terminal emmulator, and I will work to create a profile and add it to the repo.\n"
@@ -242,14 +242,14 @@ installConfigs () {
 
     # zsh
     chsh -s $(which zsh)
-    wget -O ~/.zshrc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/.zshrc
+    wget -O --tries=5 --wait=2 --timeout=15 ~/.zshrc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/.zshrc
     mkdir -p ~/Scripts
-    wget -O ~/Scripts/CommandList.sh https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/scripts/CommandList.sh
+    wget -O --tries=5 --wait=2 --timeout=15 ~/Scripts/CommandList.sh https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/scripts/CommandList.sh
     chmod +x ~/Scripts/CommandList.sh
 
     # fastfetch
     mkdir -p ~/.config/fastfetch
-    wget -O ~/.config/fastfetch/config.jsonc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/fastfetch/config.jsonc
+    wget -O --tries=5 --wait=2 --timeout=15 ~/.config/fastfetch/config.jsonc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/fastfetch/config.jsonc
 
     # ufw
     sudo ufw enable
@@ -343,7 +343,7 @@ main () {
     # fastfetch
     if [[ "$packageManager" == "apt" ]]; then
         if ! packageInstallPrefix fastfetch; then
-            wget -O ~/Downloads/fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb
+            wget -O --tries=5 --wait=2 --timeout=15 ~/Downloads/fastfetch.deb https://github.com/fastfetch-cli/fastfetch/releases/download/2.48.1/fastfetch-linux-amd64.deb
             sudo apt install ~/Downloads/fastfetch.deb
         fi
     else
@@ -366,7 +366,12 @@ main () {
 
     sudo mkdir -p /opt
 
+
+    thisCommandDoesNotExist
+    # trying to cause an error to test the error log creation
+    # i'm also curious to see how the log looks. if it looks like shit then im not gonna wanna debug it
     
+
     browserInstall
     discordInstall
     installConfigs 
