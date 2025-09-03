@@ -364,12 +364,6 @@ main () {
 
     sudo mkdir -p /opt
 
-
-    thisCommandDoesNotExist
-    # trying to cause an error to test the error log creation
-    # i'm also curious to see how the log looks. if it looks like shit then im not gonna wanna debug it
-    
-
     browserInstall
     discordInstall
     installConfigs 
