@@ -6,8 +6,6 @@
 
 set -Eeuo pipefail
 IFS=$'\n\t'
-trap 'rc=$?; printf "Error @ %s:%s (exit %s)\n\Please copy the contents of the error.log file and paste it in an issue, and then submit the issue to the repo!\nThe error.log file should be found in ~/Downloads\n" "${BASH_SOURCE[0]}" "${LINENO}" "$rc" >> error.log; exit "$rc"' ERR
-
 
 detectDistro () {
     source /etc/os-release
