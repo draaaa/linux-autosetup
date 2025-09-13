@@ -4,6 +4,10 @@
 # Essentially, if a single network error occurs, the script will abort and will not attempt to reconnect anything
 # That's probably the main issue that I need to fix next
 
+# Also, I wanna add a custom config for the Konsole as well. 
+# I don't wanna do everything in one day so that I get burnt out, especially after jumping on this when 
+# badass Professor Hawkins helped me with where I should go next on this project, big ups to him btw
+
 set -Eeuo pipefail
 IFS=$'\n\t'
 
@@ -220,13 +224,28 @@ EOF
 }
 
 
-installConfigs () {
-    # for consistency, use links like this - https://raw.githubusercontent.com/draaaa/linux-autosetup/main/file
-    # next feature to be added would be using links to custom configs rather than my own preset configs
+installZshConfig () {
     if [[ "$ZSH_CONFIG" == "Default" ]]; then
         return 0
     elif [[ "$ZSH_CONFIG" == "Personal Config" ]]; then
-        ZSH_URL = https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/.zshrc
+        ZSH_URL="https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/.zshrc"
+    elif [[ "$ZSH_CONFIG" == "BYO Config" ]]; then
+        ZSH_URL="$ZSH_CONFIG"
+    fi
+}
+
+installFastfetchConfig () {
+    if [[ "$FASTFETCH_CONFIG" == "Default" ]]; then
+        return 0
+    elif [[ "$FASTFETCH_CONFIG" == "Personal Config" ]]; then
+        FASTFETCH_URL="https://raw.githubusercontent.com/draaaa/linux-autosetup/main/fastfetch/config.jsonc"
+    elif [["$FASTFETCH_URL" == "BYO Config" ]]; then
+        FASTFETCH_URL="$FASTFETCH_CONFIG"
+}
+
+# TODO - ADD OPTION FOR CUSTOM CONFIG HERE AS WELL
+# NEED TO START ADDING OTHER TERMINAL CONFIGS AS WELL
+installConfigs () {
 
     # konsole
     if [[ -n "$KONSOLE_VERSION" ]]; then
@@ -240,10 +259,8 @@ installConfigs () {
 
     # zsh
     chsh -s $(which zsh)
-    wget -O --tries=5 --wait=2 --timeout=15 ~/.zshrc https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/.zshrc
-    mkdir -p ~/Scripts
-    wget -O --tries=5 --wait=2 --timeout=15 ~/Scripts/CommandList.sh https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/scripts/CommandList.sh
-    chmod +x ~/Scripts/CommandList.sh
+    wget -O --tries=5 --wait=2 --timeout=15 ~/.zshrc "$ZSH_URL"
+
 
     # fastfetch
     mkdir -p ~/.config/fastfetch
@@ -256,7 +273,7 @@ installConfigs () {
 
 main () {
     if whiptail --title "linux-autosetup" --yesno \
-        "Are you a sudoer?" 10 50; then
+        "Hello!\n\nIf you have your own configs you'd like to install, please have the links to the files ready.\n\nFirstly, are you a sudoer?" 10 75; then
             :
     else
         whiptail --title "linux-autosetup" --msgbox \
@@ -294,7 +311,7 @@ main () {
     UTILS=$(echo "$UTILS" | tr -d '"')
 
     if whiptail --title "linux-autosetup" --yesno \
-        "The system should update before being ran\n\nUpdate?" 10 75; then
+        "The system should update after installing everything\n\nUpdate?" 10 75; then
             doUpdate=true
     else
         doUpdate=false
@@ -317,7 +334,7 @@ main () {
     # zsh config
     if [[ "$UTILS" == *"zsh"* ]]; then
         ZSH_CONFIG=$(whiptail --title linux-autosetup --menu \
-        "You have selected to install uitilities where you're able to use custom configurations\nPlease choose an option to install" 20 75 10 \
+        "You have selected to install zsh, which comes with configurations!\n\nPlease choose an option to install" 20 75 10 \
         "Personal Config" "Install my own config" \
         "BYO Config" "Bring your own config (MUST BE LINK TO RAW '.zshrc' FILE)" \
         "Default" "Do not install any custom configurations for zsh" \
@@ -326,13 +343,30 @@ main () {
     fi
     
     if [[ "$ZSH_CONFIG" == "BYO Config" ]]; then
-        ZSH_CONFIG=(whiptail --title linux-autosetup --inputbox "Paste the link to your raw .zshrc here" 10 80 3>&1 1>&2 2>&3)
+        ZSH_CONFIG=(whiptail --title linux-autosetup --inputbox "Paste the link to your raw '.zshrc' here" 10 80 3>&1 1>&2 2>&3)
         # dont need to strip the quotation marks, whiptail returns the string exactly
         # actually, we can probably remove them from most of the other options, that might be what we do next
+    fi
+
+
+    if [[ "$UTILS" == *"Fastfetch"* ]]; then
+        # at some point i want to add an option for using an external logo.txt
+        FASTFETCH_CONFIG=$(whiptail --title linux-autosetup --menu \
+        "You have selected to install Fastfetch, with comes with configurations!\n\nPlease choose an option to install" 20 75 10 \
+        "Personal Config" "Install my own config" \
+        "BYO Config" "Bring your own config (MUST BE LINK TO RAW 'config.jsonc' FILE)" \
+        "Default" "Do not install any custom configurations for Fastfetch" \
+        3>&1 1>&2 2>&3)
+        FASTFETCH_CONFIG=$(echo "$FASTFETCH_CONFIG" | tr -d '"')
+    fi
+
+    if [[ "$FASTFETCH_CONFIG" == "BYO Config" ]]; then
+        FASTFETCH_CONFIG=(whiptail --title linux-autosetup --inputbox "Paste the link to your raw 'config.jsonc' here" 10 80 3>&1 1>&2 2>&3)
+    fi
 
 
     if whiptail --title "linux-autosetup" --yesno \
-        "The system should update before being ran\n\nUpdate?" 10 75; then
+        "The system should update before everything\n\nUpdate?" 10 75; then
             doUpdate=true
     else
         doUpdate=false
