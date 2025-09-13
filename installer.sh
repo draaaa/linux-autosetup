@@ -223,10 +223,10 @@ EOF
 installConfigs () {
     # for consistency, use links like this - https://raw.githubusercontent.com/draaaa/linux-autosetup/main/file
     # next feature to be added would be using links to custom configs rather than my own preset configs
-    if [[ "$doFlatpak" == "false" ]]; then
-        printf "not installing dot files"
+    if [[ "$ZSH_CONFIG" == "Default" ]]; then
         return 0
-    fi
+    elif [[ "$ZSH_CONFIG" == "Personal Config" ]]; then
+        ZSH_URL = https://raw.githubusercontent.com/draaaa/linux-autosetup/main/zsh/.zshrc
 
     # konsole
     if [[ -n "$KONSOLE_VERSION" ]]; then
@@ -289,7 +289,7 @@ main () {
     "zsh" "Download and install zsh as the default shell" OFF \
     "Fastfetch" "Download and install Fastfetch" OFF \
     "UFW" "Download, install, and enable Uncomplicated Fire Wall" OFF \
-    "Mullvad VPN" "Download and install Mullvad VPN" OFF \
+    #"Mullvad VPN" "Download and install Mullvad VPN" OFF \
     3>&1 1>&2 2>&3)
     UTILS=$(echo "$UTILS" | tr -d '"')
 
@@ -313,11 +313,29 @@ main () {
         discordInstall=true
     fi
 
+
+    # zsh config
+    if [[ "$UTILS" == *"zsh"* ]]; then
+        ZSH_CONFIG=$(whiptail --title linux-autosetup --menu \
+        "You have selected to install uitilities where you're able to use custom configurations\nPlease choose an option to install" 20 75 10 \
+        "Personal Config" "Install my own config" \
+        "BYO Config" "Bring your own config (MUST BE LINK TO RAW '.zshrc' FILE)" \
+        "Default" "Do not install any custom configurations for zsh" \
+        3>&1 1>&2 2>&3)
+        ZSH_CONFIG=$(echo "$ZSH_CONFIG" | tr -d '"')
+    fi
+    
+    if [[ "$ZSH_CONFIG" == "BYO Config" ]]; then
+        ZSH_CONFIG=(whiptail --title linux-autosetup --inputbox "Paste the link to your raw .zshrc here" 10 80 3>&1 1>&2 2>&3)
+        # dont need to strip the quotation marks, whiptail returns the string exactly
+        # actually, we can probably remove them from most of the other options, that might be what we do next
+
+
     if whiptail --title "linux-autosetup" --yesno \
-        "Do you want to install my personal dot files?\n\nThis includes zsh config, fastfetch config, and konsole profile" 10 75; then
-            doDotFiles=true
+        "The system should update before being ran\n\nUpdate?" 10 75; then
+            doUpdate=true
     else
-        doDotFiles=false
+        doUpdate=false
     fi
     
     detectDistro  # returns packageManager
