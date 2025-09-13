@@ -1,10 +1,7 @@
 # In the works
 This is what is currently being worked
-- Adding more methods for installing
-- Planning the workflow of the script (how the user interacts with it)
-- Refining the user interaction
-- Must test on distros before next official release
-- Need to add a network grace period
+- Adding more customization options (user can use their own configuration)
+- Adding more configurations for other terminals
 
 # General
 - Add more packages and apps
