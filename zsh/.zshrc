@@ -22,7 +22,7 @@ export PATH="$HOME/bin:$PATH"
     alias c="clear"
 
   # function aliases
-    alias cmd="~/Scripts/CommandList.sh"
+
 
   # fun aliases
     alias claer="cowsay -f stegosaurus 'slow down the typing and make less errors'"
