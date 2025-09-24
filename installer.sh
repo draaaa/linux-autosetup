@@ -306,9 +306,15 @@ main () {
     "zsh" "Download and install zsh as the default shell" OFF \
     "Fastfetch" "Download and install Fastfetch" OFF \
     "UFW" "Download, install, and enable Uncomplicated Fire Wall" OFF \
+    "Terminal" "This doesn't work, but is the current focus of development. You can try if you want tho" OFF \
     #"Mullvad VPN" "Download and install Mullvad VPN" OFF \
     3>&1 1>&2 2>&3)
     UTILS=$(echo "$UTILS" | tr -d '"')
+
+    
+    
+
+
 
     if whiptail --title "linux-autosetup" --yesno \
         "The system should update after installing everything\n\nUpdate?" 10 75; then
@@ -341,7 +347,27 @@ main () {
         3>&1 1>&2 2>&3)
         ZSH_CONFIG=$(echo "$ZSH_CONFIG" | tr -d '"')
     fi
+
+
+
+# !!! this is the focus for right now
+# spaced out to make it obvious that this is what's being worked on
+    if [[ "$UTILS" == *"Terminal"* ]]; then
+        TERMINAL=$(whiptail --title "linux-autosetup" --menu \
+        "This does nothing right now, installing terminals is being tested\n\nYou can cosplay installing one though if you want" 20 75 10 \
+        "Konsole" "Install Konsole (native to KDE)" \
+        "GNOME-terminal" "Install GNOME-terminal (native to GNOME)" \
+        "Kitty" "Install kitty" \
+        "foot" "Install foot (Wayland only, no X11)" \
+        3>&1 1>&2 2>&3)
+        TERMINAL=$(echo "$TERMINAL" | tr -d '"')
+    fi 
     
+
+
+
+
+
     if [[ "$ZSH_CONFIG" == "BYO Config" ]]; then
         ZSH_CONFIG=(whiptail --title linux-autosetup --inputbox "Paste the link to your raw '.zshrc' here" 10 80 3>&1 1>&2 2>&3)
         # dont need to strip the quotation marks, whiptail returns the string exactly
@@ -364,9 +390,9 @@ main () {
         FASTFETCH_CONFIG=(whiptail --title linux-autosetup --inputbox "Paste the link to your raw 'config.jsonc' here" 10 80 3>&1 1>&2 2>&3)
     fi
 
-
+    # probably move this to the bottom portion after everything is decided. just feels right
     if whiptail --title "linux-autosetup" --yesno \
-        "The system should update before everything\n\nUpdate?" 10 75; then
+        "The system should update before everything gets installed\n\nUpdate?" 10 75; then
             doUpdate=true
     else
         doUpdate=false
